@@ -16,6 +16,8 @@ import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 
 import styles from './index.less';
 
+import logoSrc from './logo.png';
+
 const LoginMessage: React.FC<{
   content: string;
 }> = ({ content }) => (
@@ -84,22 +86,14 @@ const Login: React.FC = () => {
       </div>
       <div className={styles.content}>
         <LoginForm
-          logo={<img alt="logo" src="/logo.svg" />}
-          title="龙舟赛事组织系统"
-          subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
+          logo={<img alt="logo" src={logoSrc} style={{ width: 44 }} />}
+          title="龙舟赛事管理系统"
+          subTitle={
+            '方便易用的龙舟赛事组织系统' /*intl.formatMessage({ id: 'pages.layouts.userLayout.title' })*/
+          }
           initialValues={{
             autoLogin: true,
           }}
-          actions={[
-            <FormattedMessage
-              key="loginWith"
-              id="pages.login.loginWith"
-              defaultMessage="其他登录方式"
-            />,
-            <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.icon} />,
-            <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={styles.icon} />,
-            <WeiboCircleOutlined key="WeiboCircleOutlined" className={styles.icon} />,
-          ]}
           onFinish={async (values) => {
             await handleSubmit(values as API.LoginParams);
           }}

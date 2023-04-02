@@ -1,74 +1,185 @@
 import React from 'react';
-import { Button, Table } from 'antd';
+import { Button, Card, List, Modal, Space, Table, Tag } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
+import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
+import { Label } from 'bizcharts';
+import VerticalSpace from '@/components/VerticalSpace';
 
 const dataSource = [
   {
-    competitorNo: '1',
-    competitorName: '中华深圳8月龙舟',
-    competitorRanger: '2022-7-8~2022-11-2',
+    item: '100米直道',
+    groupName: '女子组(12人龙舟)',
+    content: '轮次赛第一轮',
+    teamNumber: 6,
+    remark: '三轮之和，积分高者名列前次，若积分相等，以最好两轮成绩判定',
+    time: '18:05',
   },
   {
-    competitorNo: '2',
-    competitorName: '中华深圳9月龙舟',
-    competitorRanger: '2022-7-8~2022-11-2',
+    item: '100米直道',
+    groupName: '男子组(12人龙舟)',
+    content: '预赛第1 组',
+    teamNumber: 4,
+    remark: '可以编辑修改的 ',
+    time: '18:05',
   },
   {
-    competitorNo: '3',
-    competitorName: '中华深圳10月龙舟',
-    competitorRanger: '2022-7-8~2022-11-2',
+    item: '100米直道',
+    time: '18:05',
+
+    groupName: '男子组(12人龙舟)',
+    content: '预赛第 2 组',
+    teamNumber: 6,
+    remark: '三轮之和，积分高者名列前次，若积分相等，以最好两轮成绩判定',
+  },
+  {
+    item: '100米直道',
+
+    groupName: '女子组(22人龙舟)',
+    content: '轮次赛第一轮',
+    teamNumber: 6,
+    remark: '三轮之和，积分高者名列前次，若积分相等，以最好两轮成绩判定',
+    time: '18:05',
+  },
+  {
+    item: '100米直道',
+
+    groupName: '男子组(22人龙舟)',
+    content: '预赛第1 组',
+    teamNumber: 4,
+    remark: '三轮之和，积分高者名列前次，若积分相等，以最好两轮成绩判定',
+    time: '18:05',
+  },
+  {
+    item: '100米直道',
+
+    groupName: '男子组(22人龙舟)',
+    content: '预赛第 2 组',
+    teamNumber: 4,
+    remark: '三轮之和，积分高者名列前次，若积分相等，以最好两轮成绩判定',
+    time: '18:05',
+  },
+  {
+    item: '100米直道',
+
+    groupName: '男子组(12人龙舟)',
+    content: '半决赛  1 组',
+    teamNumber: 5,
+    remark: '三轮之和，积分高者名列前次，若积分相等，以最好两轮成绩判定',
+    time: '18:05',
+  },
+  {
+    item: '100米直道',
+
+    groupName: '女子组(22人龙舟)',
+    content: '轮次赛第二轮',
+    teamNumber: 5,
+    remark: '三轮之和，积分高者名列前次，若积分相等，以最好两轮成绩判定',
+    time: '18:05',
+  },
+  {
+    item: '100米直道',
+
+    groupName: '男子组(22人龙舟)',
+    content: '半决赛 1 组',
+    teamNumber: 5,
+    remark: '可以编辑',
+    time: '18:05',
+  },
+  {
+    item: '100米直道',
+
+    groupName: '男子组(12人龙舟)',
+    content: '决赛 1 组',
+    teamNumber: 6,
+    remark: '可以编辑',
+    time: '18:05',
+  },
+
+  {
+    item: '100米直道',
+
+    groupName: '女子组(22人龙舟)',
+    content: '轮次赛 第三轮',
+    teamNumber: 5,
+    remark: '可以编辑',
+    time: '18:05',
+  },
+
+  {
+    item: '100米直道',
+
+    groupName: '男子组(22人龙舟)',
+    content: '小决赛 1 组',
+    teamNumber: 2,
+    remark: '可以编辑',
+    time: '18:05',
+  },
+  {
+    item: '100米直道',
+    groupName: '男子组(22人龙舟)',
+    content: '决赛 1 组',
+    teamNumber: 6,
+    remark: '可以编辑',
+    time: '18:05',
   },
 ];
 
 const columns = [
   {
-    title: '赛事编号',
-    dataIndex: 'competitorNo',
-    key: 'competitorNo',
+    title: '项目',
+    dataIndex: 'item',
+    key: 'item',
   },
   {
-    title: '比赛名称',
-    dataIndex: 'competitorName',
-    key: 'competitorName',
+    title: '组别',
+    dataIndex: 'groupName',
+    key: 'groupName',
   },
   {
-    title: '比赛时间范围',
-    dataIndex: 'competitorRanger',
-    key: 'competitorRanger',
+    title: '时间',
+    dataIndex: 'time',
+    key: 'time',
+    render: (initVal: any) => <Tag color="green">{initVal}</Tag>,
   },
-
   {
-    title: '新增',
-    dataIndex: 'checkStatus',
-    key: 'checkStatus',
-    render: (text: any) => (
-      <div>
-        <Button>查看详情</Button>
-        <Button>编辑</Button>
-      </div>
-    ),
+    title: '竞赛内容',
+    dataIndex: 'content',
+    key: 'content',
+  },
+  {
+    title: '备注',
+    dataIndex: 'remark',
+    key: 'remark',
   },
 ];
 
 function Index() {
   return (
-    <PageContainer
-      title="整体赛事时间安排"
-      content={<div>此页面用于安排整体的赛事时间，用于因对突发的情况</div>}
-    >
-      <pre>
-        功能设想: 时间:2 月 8 号 上午: 9:00-11:00 500男子米 <br />
-        3:00-4:00 500环型比赛男子米 时间:2 月 9<br />
-        号 上午: 9:00-11:00 10000男子米 3:00-4:00 500环型比赛女子米
-        <br />
-        <br />
-        <b>
-          功能设想，改变比赛时间的安排，已经进行过的比赛，不可以再调整时间了。功能设置，拖拽排序
-          检录时间：等于
-        </b>
-      </pre>
-      <Table dataSource={dataSource} columns={columns} />
-      <div>//秩序册</div>
+    <PageContainer title="整体赛事时间安排">
+      <Card>
+        <VerticalSpace>
+          <Button
+            type="primary"
+            onClick={() => {
+              history.push('/competitor/create');
+            }}
+          >
+            开始编排
+          </Button>
+          <Table
+            dataSource={dataSource}
+            columns={columns}
+            pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
+            bordered
+            title={() => '2022 9-3 上午竞赛日程安排'}
+            footer={() => (
+              <div>
+                <span>颁奖仪式</span>
+              </div>
+            )}
+          />
+        </VerticalSpace>
+      </Card>
     </PageContainer>
   );
 }

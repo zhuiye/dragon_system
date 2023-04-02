@@ -55,3 +55,13 @@ npm test
 ## More
 
 You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
+
+横栏 :#D84F47 字体聚焦：#D33A31 红心:#CD2929
+
+字体颜色:#2F2F2F
+
+- 字体未聚焦颜色:#BFBFBF
+
+背景聚焦颜色：#E1E1E1
+
+链接颜色：#507DAF
