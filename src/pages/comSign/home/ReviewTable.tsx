@@ -1,52 +1,28 @@
 import React, { useRef, useState } from 'react';
 import { Button, message, Space, Table, Tag } from 'antd';
 import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
+import { useRequest } from 'ahooks';
+import { getSignUp } from '@/services/ant-design-pro/sign';
 
-const data = [
-  {
-    name: '七月开源龙舟大赛',
-    content: '为了举办',
-    sign_up_start_time: 1672568666,
-    sign_up_end_time: 1672568666,
-    start_time: 1672568666,
-    end_time: 1672568666,
-    status: true,
-  },
-  {
-    name: '八月五谷丰登龙舟祭',
-    content: '为了举办',
-    sign_up_start_time: 1672568666,
-    sign_up_end_time: 1672568666,
-    start_time: 1672568666,
-    end_time: 1672568666,
-    status: true,
-  },
-  {
-    name: 'xxx活动赛事1',
-    content: '为了举办',
-    sign_up_start_time: 1672568666,
-    sign_up_end_time: 1672568666,
-    start_time: 1672568666,
-    end_time: 1672568666,
-    status: true,
-  },
-];
 const columns: any = [
   {
     title: '赛事活动',
-    dataIndex: 'name',
+    dataIndex: 'competition_id',
     key: 'name',
   },
+
   {
     title: '内容说明',
-    dataIndex: 'content',
-    key: 'content',
+    dataIndex: 'desc',
+    key: 'desc',
   },
   {
     title: '审核状态',
     dataIndex: 'status',
     key: 'status',
-    render: (_time, entity) => <Tag color="green">审核通过</Tag>,
+    render: (status, entity) => (
+      <Tag color={status ? 'green' : 'gray'}>{status ? '审核通过' : '未审核'}</Tag>
+    ),
   },
   {
     title: '操作',
@@ -77,6 +53,7 @@ const columns: any = [
 ];
 
 function ReviewTable() {
+  const { data = [] } = useRequest(getSignUp);
   return <Table rowKey="key" columns={columns} dataSource={data} />;
 }
 

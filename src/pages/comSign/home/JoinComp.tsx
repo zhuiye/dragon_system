@@ -3,36 +3,9 @@ import { Button, message, Space, Table, Tag } from 'antd';
 import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
 
 import moment from 'moment';
+import { useRequest } from 'ahooks';
+import { getCompetitions } from '@/services/ant-design-pro/competition';
 
-const data = [
-  {
-    name: '七月开源龙舟大赛',
-    content: '为了举办',
-    sign_up_start_time: 1672568666,
-    sign_up_end_time: 1672568666,
-    start_time: 1672568666,
-    end_time: 1672568666,
-    status: true,
-  },
-  {
-    name: '八月五谷丰登龙舟祭',
-    content: '为了举办',
-    sign_up_start_time: 1672568666,
-    sign_up_end_time: 1672568666,
-    start_time: 1672568666,
-    end_time: 1672568666,
-    status: 0,
-  },
-  {
-    name: 'xxx活动赛事1',
-    content: '为了举办',
-    sign_up_start_time: 1672568666,
-    sign_up_end_time: 1672568666,
-    start_time: 1672568666,
-    end_time: 1672568666,
-    status: 1,
-  },
-];
 const columns: any = [
   {
     title: '赛事活动',
@@ -69,16 +42,23 @@ const columns: any = [
       <Tag color={status === 0 ? 'gray' : 'green'}>{status === 0 ? '不可报名' : '可报名'}</Tag>
     ),
   },
+
   {
     title: '操作',
     dataIndex: 'status',
     key: 'status',
-    render: (status, _) => (
+    render: (status, record: any) => (
       <Button
         type="primary"
         disabled={status === 0}
         onClick={() => {
-          history.push('/comSign/matchTeam');
+          history.push({
+            pathname: '/comSign/matchTeam',
+            query: {
+              item_sort_link: record.item_sort_link,
+              competition_id: record.id,
+            },
+          });
         }}
       >
         报名
@@ -88,14 +68,8 @@ const columns: any = [
 ];
 
 function JoinComp() {
-  return (
-    <Table
-      rowKey="key"
-      // request={getCompetitions}
-      columns={columns}
-      dataSource={data}
-    />
-  );
+  const { data = [] } = useRequest(getCompetitions);
+  return <Table rowKey="key" columns={columns} dataSource={data} />;
 }
 
 export default JoinComp;

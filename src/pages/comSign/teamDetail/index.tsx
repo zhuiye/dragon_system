@@ -1,180 +1,171 @@
-import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
+import { EditableProTable, ProColumns } from '@ant-design/pro-table';
+import { nationsArray } from './nation';
 import React, { useState } from 'react';
+import { useLocation, useParams } from 'umi';
+import { useRequest } from 'ahooks';
+import { delPlayer, getPlayers, updatePlayers } from '@/services/ant-design-pro/player';
 
-interface Item {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-}
-
-const originData: Item[] = [];
-for (let i = 0; i < 20; i++) {
-  originData.push({
-    key: i.toString(),
-    name: `Edrward ${i}`,
-    age: 32,
-    address: `London Park no. ${i}`,
+const waitTime = (time: number = 100) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, time);
   });
-}
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: any;
-  inputType: 'number' | 'text';
-  record: Item;
-  index: number;
-  children: React.ReactNode;
-}
-
-const EditableCell: React.FC<EditableCellProps> = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
-
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{ margin: 0 }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
 };
 
-const App: React.FC = () => {
-  const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
-  const [editingKey, setEditingKey] = useState('');
+type DataSourceType = {
+  player_id: React.Key;
+  title?: string;
+  readonly?: string;
+  decs?: string;
+  state?: string;
+  created_at?: string;
+  update_at?: string;
+  children?: DataSourceType[];
+};
 
-  const isEditing = (record: Item) => record.key === editingKey;
+const defaultData: DataSourceType[] = [
+  {
+    id: 624748504,
+    title: '活动名称一',
+    readonly: '活动名称一',
+    decs: '这个活动真好玩',
+    state: 'open',
+    created_at: '1590486176000',
+    update_at: '1590486176000',
+  },
+  {
+    id: 624691229,
+    title: '活动名称二',
+    readonly: '活动名称二',
+    decs: '这个活动真好玩',
+    state: 'closed',
+    created_at: '1590481162000',
+    update_at: '1590481162000',
+  },
+];
 
-  const edit = (record: Partial<Item> & { key: React.Key }) => {
-    form.setFieldsValue({ name: '', age: '', address: '', ...record });
-    setEditingKey(record.key);
-  };
+export default () => {
+  const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
+  const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
+  const location = useLocation<any>();
 
-  const cancel = () => {
-    setEditingKey('');
-  };
+  const { team_id } = location.query;
 
-  const save = async (key: React.Key) => {
-    try {
-      const row = (await form.validateFields()) as Item;
+  const { data = [], run } = useRequest(async () => getPlayers({ team_id }));
 
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        setData(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setData(newData);
-        setEditingKey('');
-      }
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
-    }
-  };
-
-  const columns = [
+  const columns: ProColumns<DataSourceType>[] = [
     {
       title: '姓名',
-      dataIndex: 'name',
-      width: '25%',
-      editable: true,
+      dataIndex: 'player_name',
+      formItemProps: (form, { rowIndex }) => {
+        return {
+          rules: rowIndex > 1 ? [{ required: true, message: '此项为必填项' }] : [],
+        };
+      },
+      width: '15%',
     },
     {
       title: '年龄',
       dataIndex: 'age',
       width: '15%',
-      editable: true,
+    },
+    {
+      title: '性别',
+      key: 'gender',
+      dataIndex: 'gender',
+      valueType: 'select',
+      request: async () => [
+        { label: '男', value: '男' },
+        { label: '女', value: '女' },
+      ],
+    },
+    {
+      title: '民族',
+      key: 'nationality',
+      dataIndex: 'nationality',
+      valueType: 'select',
+      request: async () => nationsArray,
+    },
+
+    {
+      title: '图像地址',
+      dataIndex: 'image_url',
+      key: 'image_url',
+    },
+    {
+      title: '手机号码',
+      dataIndex: 'phone_number',
+      key: 'phone_number',
     },
     {
       title: '身份证号码',
-      dataIndex: 'address',
-      width: '40%',
+      dataIndex: 'identify_number',
+      key: 'identify_number',
       editable: true,
     },
+
     {
-      title: 'operation',
-      dataIndex: 'operation',
-      render: (_: any, record: Item) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
-              保存
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>取消</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-            编辑
-          </Typography.Link>
-        );
-      },
+      title: '操作',
+      valueType: 'option',
+      width: 200,
+      render: (text, record, _, action) => [
+        <a
+          key="editable"
+          onClick={() => {
+            action?.startEditable?.(record.player_id);
+          }}
+        >
+          编辑
+        </a>,
+        <a
+          key="delete"
+          onClick={async () => {
+            await delPlayer({ player_id: record.player_id });
+            run();
+          }}
+        >
+          删除
+        </a>,
+      ],
     },
   ];
 
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Item) => ({
-        record,
-        inputType: col.dataIndex === 'age' ? 'number' : 'text',
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
-
   return (
-    <Form form={form} component={false}>
-      <Table
-        components={{
-          body: {
-            cell: EditableCell,
-          },
+    <>
+      <EditableProTable<DataSourceType>
+        rowKey="player_id"
+        headerTitle="我的队员"
+        maxLength={5}
+        scroll={{
+          x: 960,
         }}
-        bordered
-        dataSource={data}
-        columns={mergedColumns}
-        rowClassName="editable-row"
-        pagination={false}
+        recordCreatorProps={false}
+        loading={false}
+        columns={columns}
+        request={async () => ({
+          data: data,
+          total: data.length,
+          success: true,
+        })}
+        value={data}
+        onChange={setDataSource}
+        editable={{
+          type: 'multiple',
+          editableKeys,
+          onSave: async (rowKey, data, row) => {
+            console.log(rowKey, data, row);
+
+            delete data.index;
+            await updatePlayers(data);
+
+            run();
+            // 更新表哥
+            // await waitTime(2000);
+          },
+          onChange: setEditableRowKeys,
+        }}
       />
-    </Form>
+    </>
   );
 };
-
-export default App;

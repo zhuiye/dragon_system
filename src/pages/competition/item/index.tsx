@@ -1,91 +1,132 @@
 // 项目表
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Form, Input, Radio, Row, Space, Table } from 'antd';
+import { Button, Card, Form, Input, Radio, Row, Space, Table, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import {
+  getCompetitionSort,
+  getCompetitionItem,
+  addCompetitionItem,
+  deleteItem,
+  addCompetitionSort,
+  deleteSortItem,
+} from '@/services/ant-design-pro/competition';
 
 import React, { useRef, useState } from 'react';
-import ItemSortTable from './component/ItemSortTable';
+import CostumeTable from './component/CostumeTable';
 
-const data: any[] = [
-  {
-    item_id: '1',
-    item_name: '100米直道',
-  },
-];
-const columns: ColumnsType<any> = [
-  {
-    title: '项目id',
-    dataIndex: 'item_id',
-    key: 'item_id',
-  },
-  {
-    title: '项目名',
-    dataIndex: 'item_name',
-  },
+function useTableAndForm(api: any): [any, any, () => void] {
+  const [form] = Form.useForm();
+  const tableRef = useRef<{ refresh: () => void }>();
 
-  {
-    title: '操作',
-    key: 'action',
-    render: (_, record) => <Button type="primary">删除</Button>,
-  },
-];
+  const onFinishItem = async () => {
+    await api(form.getFieldsValue());
+    message.success('添加成功');
+    tableRef.current?.refresh();
+  };
+
+  return [form, tableRef, onFinishItem];
+}
 
 function Index() {
-  const [form] = Form.useForm();
+  const [itemForm, itemTableRef, onFinishItem] = useTableAndForm(addCompetitionItem);
+  const [itemSortForm, itemSortTableRef, onFinishItemSort] = useTableAndForm(addCompetitionSort);
 
-  const onFinishItem = (values: any) => {
-    console.log('Success:', values);
+  const onDel = async (record: any, tableRef: any, delApi: any) => {
+    await delApi(record);
+    message.success('删除成功');
+    tableRef.current?.refresh();
   };
 
-  const onFinishFailedItem = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
+  const columns: ColumnsType<any> = [
+    {
+      title: '项目id',
+      dataIndex: 'item_id',
+      key: 'item_id',
+    },
+    {
+      title: '项目名',
+      dataIndex: 'item_name',
+    },
 
-  const onFinishItemSort = () => {};
+    {
+      title: '操作',
+      key: 'action',
+      dataIndex: 'item_id',
+      render: (item_id) => (
+        <Button
+          type="primary"
+          onClick={() => {
+            onDel({ item_id }, itemTableRef, deleteItem);
+          }}
+        >
+          删除
+        </Button>
+      ),
+    },
+  ];
 
-  const onFinishFailedItemSort = () => {};
+  const itemSortColumns: ColumnsType<any> = [
+    {
+      title: '项目子类id',
+      dataIndex: 'sort_id',
+      key: 'sort_id',
+    },
+    {
+      title: '项目名',
+      dataIndex: 'sort_name',
+    },
+    {
+      title: '项目参赛最大人数',
+      dataIndex: 'sort_number',
+    },
+    {
+      title: '项目性别要求',
+      dataIndex: 'sort_gender',
+    },
 
-  const itemSortTableRef = useRef<{ refresh: () => void }>();
+    {
+      title: '操作',
+      key: 'action',
+      dataIndex: 'sort_id',
+      render: (sort_id) => (
+        <Button
+          danger
+          type="primary"
+          onClick={async () => {
+            onDel({ sort_id }, itemSortTableRef, deleteSortItem);
+          }}
+        >
+          删除
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <PageContainer title="项目列表配置">
       <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-        <Form
-          layout="inline"
-          form={form}
-          onFinish={onFinishItem}
-          onFinishFailed={onFinishFailedItem}
-        >
-          <Form.Item label="项目名">
-            <Input name="item_name" placeholder="如:邀请赛,友谊赛 等" />
+        <Form layout="inline" form={itemForm as any}>
+          <Form.Item label="项目名" name="item_name">
+            <Input placeholder="如:邀请赛,友谊赛 等" />
           </Form.Item>
           <Form.Item>
-            <Button type="dashed" htmlType="submit">
+            <Button type="dashed" htmlType="submit" onClick={onFinishItem}>
               添加
             </Button>
           </Form.Item>
         </Form>
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
-        />
+        <CostumeTable columns={columns} api={getCompetitionItem} ref={itemTableRef as any} />
 
-        <Form
-          layout="inline"
-          form={form}
-          onFinish={onFinishItemSort}
-          onFinishFailed={onFinishFailedItemSort}
-        >
-          <Form.Item label="子项目名">
-            <Input name="sort_name" placeholder="如:22男女混合100米直道" />
+        <Form layout="inline" form={itemSortForm}>
+          <Form.Item label="子项目名" name="sort_name">
+            <Input placeholder="如:22男女混合100米直道" />
           </Form.Item>
 
-          <Form.Item label="人数">
-            <Input name="count" type="number" min={6} placeholder="请输入比赛人数" />
+          <Form.Item label="人数" name="sort_number">
+            <Input type="number" min={6} placeholder="请输入比赛人数" />
           </Form.Item>
-          <Form.Item label="性别">
-            <Radio.Group name="gender" defaultValue={1}>
+          <Form.Item label="性别" name="sort_gender">
+            <Radio.Group>
               <Radio value={0}>男</Radio>
               <Radio value={1}>女</Radio>
               <Radio value={2}>混合</Radio>
@@ -93,12 +134,16 @@ function Index() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="dashed" htmlType="submit">
+            <Button type="dashed" htmlType="submit" onClick={onFinishItemSort}>
               添加
             </Button>
           </Form.Item>
         </Form>
-        <ItemSortTable ref={itemSortTableRef as any} />
+        <CostumeTable
+          columns={itemSortColumns}
+          api={getCompetitionSort}
+          ref={itemSortTableRef as any}
+        />
       </Space>
     </PageContainer>
   );

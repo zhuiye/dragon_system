@@ -1,35 +1,34 @@
 import { request } from 'umi';
 
-export interface Competition {
-  name: string;
+export interface Team {
+  team_id: number;
+  team_name: number;
 
-  content: string;
+  desc: string;
 
-  sign_up_start_time: number;
+  last_score: number;
 
-  sign_up_end_time: number;
+  user_id: number;
 
-  start_time: number;
-
-  end_time: number;
+  is_seed: number;
 }
 /** 此处后端没有提供注释 GET /api/competition */
-export async function getCompetitions(options?: { [key: string]: any }) {
-  return request<Competition[]>('/dragon-api/competition', {
+export async function getTeams(options?: { [key: string]: any }) {
+  return request<Team[]>('/dragon-api/team', {
     method: 'GET',
-    params: options || {},
+    ...(options || {}),
   }).then((res: any) => res.data);
 }
 
-export async function addCompetition(description: { [key: string]: any }) {
-  return request<Competition>('/dragon-api/competition', {
+export async function addTeams(description: { [key: string]: any }) {
+  return request<Omit<Team, 'team_id'>>('/dragon-api/team', {
     method: 'POST',
     data: description,
   });
 }
 
-export async function delCompetition(description: { [key: string]: any }) {
-  return request<Competition>('/dragon-api/competition', {
+export async function delTeam(description: { [key: string]: any }) {
+  return request<any>('/dragon-api/team', {
     method: 'Delete',
     data: description,
   });

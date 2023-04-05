@@ -47,11 +47,13 @@ const MatchTeam: React.FC = () => {
             dataSource={personList}
             renderItem={(item) => (
               <List.Item
-                actions={[
-                  <a key="list-loadmore-more" onClick={() => {}}>
-                    删除
-                  </a>,
-                ]}
+                actions={
+                  [
+                    // <a key="list-loadmore-more" onClick={() => {}}>
+                    //   删除
+                    // </a>,
+                  ]
+                }
               >
                 <List.Item.Meta
                   avatar={<Avatar size="large" />}

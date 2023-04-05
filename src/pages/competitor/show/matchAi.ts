@@ -47,36 +47,44 @@ function generateSnakeGroup(arr: any, groupNumber: any) {
 }
 
 /** 赛道匹配算法 */
-function routeMatchGrade() {
+const getRouteMap = (pathCount: number, groupRank: number) => {
   const routeMap = new Map();
-  routeMap.set(4, [
-    { routeNo: 1, rank: 3 },
-    { routeNo: 2, rank: 1 },
-    { routeNo: 3, rank: 2 },
-    { routeNo: 4, rank: 4 },
-  ]);
-  routeMap.set(6, [
-    { routeNo: 1, rank: 5 },
-    { routeNo: 2, rank: 3 },
-    { routeNo: 3, rank: 1 },
-    { routeNo: 4, rank: 2 },
-    { routeNo: 5, rank: 4 },
-    { routeNo: 6, rank: 6 },
-  ]);
-  routeMap.set(8, [
-    { routeNo: 1, rank: 7 },
-    { routeNo: 2, rank: 5 },
-    { routeNo: 3, rank: 3 },
-    { routeNo: 4, rank: 1 },
-    { routeNo: 5, rank: 2 },
-    { routeNo: 6, rank: 4 },
-    { routeNo: 7, rank: 6 },
-    { routeNo: 8, rank: 8 },
-  ]);
+  const innerFourMap = new Map();
+  innerFourMap.set(3, 1);
+  innerFourMap.set(1, 2);
+  innerFourMap.set(2, 3);
+  innerFourMap.set(4, 4);
 
-  return routeMap;
+  routeMap.set(4, innerFourMap);
+
+  const innerSixMap = new Map();
+
+  innerSixMap.set(5, 1);
+  innerSixMap.set(3, 2);
+  innerSixMap.set(1, 3);
+  innerSixMap.set(2, 4);
+  innerSixMap.set(4, 5);
+  innerSixMap.set(6, 6);
+
+  routeMap.set(6, innerSixMap);
+
+  const innerEightMap = new Map();
+
+  innerEightMap.set(7, 1);
+  innerEightMap.set(5, 2);
+  innerEightMap.set(3, 3);
+  innerEightMap.set(1, 4);
+  innerEightMap.set(2, 5);
+  innerEightMap.set(4, 6);
+  innerEightMap.set(6, 7);
+  innerEightMap.set(7, 8);
+
+  routeMap.set(8, innerEightMap);
+
+  return routeMap.get(pathCount).get(groupRank);
 
   // if()
-}
+};
 
+export { getRouteMap };
 export default generateSnakeGroup;

@@ -1,74 +1,88 @@
 import React, { useRef, useState } from 'react';
-import { Button, message, Space, Table, Tabs, Modal, Input, List, Avatar, Card } from 'antd';
-import { PageContainer } from '@ant-design/pro-layout';
-import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
+import { Button, message, Space, Table, Tabs, Modal, Input, List, Avatar, Card, Form } from 'antd';
+import { useIntl, history, FormattedMessage, SelectLang, useModel, useHistory } from 'umi';
 import JoinComp from './JoinComp';
-
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import parseExcel from './parseExcel';
 import ReviewTable from './ReviewTable';
+import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
+import { useRequest } from 'ahooks';
+import { addTeams, getTeams } from '@/services/ant-design-pro/team';
+import { importPlayers } from '@/services/ant-design-pro/player';
 
-const { TextArea } = Input;
-function Index() {
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  const actionRef = useRef<ActionType>();
+const exportExcel = (team_id: number) => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.xlsx';
+  input.onchange = async (event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      try {
+        const people = await parseExcel(file);
+        console.log(people);
 
-  const [teamList, setTeamList] = useState<{ teamName: string; teamDesc: string }[]>([
-    { teamName: '我的队伍1', teamDesc: '说的话圣诞节活动经费和三等奖' },
-    { teamName: '我的队伍2', teamDesc: '说的话圣诞节活动经费和三等奖1' },
-  ]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+        const state = people.map((item) => ({ ...item, user_id: 1, team_id: team_id }));
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const exportExcel = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.xlsx';
-    input.onchange = async (event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (file) {
-        try {
-          const people = await parseExcel(file);
-          message.success('导入成功');
-          //   console.log(people);
-        } catch (error) {
-          console.log(error);
-        }
+        await importPlayers({ data: state });
+        message.success('导入成功');
+      } catch (error) {
+        console.log(error);
       }
-    };
-    input.click();
+    }
   };
+  input.click();
+};
+
+function Index() {
+  const { data: teamList = [], run } = useRequest(getTeams);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-      <Modal
-        destroyOnClose
-        title="创建队伍"
+      <ModalForm
+        title={'创建队伍'}
+        width="600px"
         visible={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        onVisibleChange={setIsModalOpen}
+        onFinish={async (value) => {
+          const success = await addTeams({ ...value, user_id: 1 });
+          if (success) {
+            setIsModalOpen(false);
+            run();
+          }
+        }}
       >
-        <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-          <Input placeholder="请输入队伍名" />
+        <ProFormText
+          rules={[
+            {
+              required: true,
+              message: ' name is required',
+            },
+          ]}
+          width="xl"
+          name="team_name"
+          tooltip="最长50个字符"
+          placeholder="请输入队伍的名字"
+        />
 
-          <TextArea rows={4} placeholder="请填写关于此次参赛的描述" />
-        </Space>
-      </Modal>
+        <ProFormTextArea
+          width="xl"
+          name="desc"
+          label="备注"
+          tooltip="不可为空"
+          placeholder="备注"
+        />
+        <ProFormText rules={[]} width="xl" name="score" placeholder="上一轮成绩，无可不填" />
+      </ModalForm>
+
       <Tabs defaultActiveKey="1">
         <Tabs.TabPane tab="我的队伍" key="1">
           <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-            <Button type="primary" onClick={showModal}>
+            <Button
+              type="primary"
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+            >
               创建队伍
             </Button>
             <Card>
@@ -76,20 +90,20 @@ function Index() {
                 className="demo-loadmore-list"
                 itemLayout="horizontal"
                 dataSource={teamList}
-                renderItem={(item) => (
+                renderItem={(item: any) => (
                   <List.Item
                     actions={[
                       <a
                         key="list-loadmore-edit"
-                        title="利用excel导入事半功倍"
-                        onClick={exportExcel}
+                        title="利用excel报名导入更加迅速"
+                        onClick={() => exportExcel(item.team_id)}
                       >
                         导入
                       </a>,
                       <a
                         key="list-loadmore-more"
                         onClick={() => {
-                          history.push('comSign/teamDetail');
+                          history.push(`comSign/teamDetail?team_id=${item.team_id}`);
                         }}
                       >
                         详情
@@ -98,8 +112,8 @@ function Index() {
                   >
                     <List.Item.Meta
                       avatar={<Avatar />}
-                      title={<a href="https://ant.design">{item.teamName}</a>}
-                      description={item.teamDesc}
+                      title={<a href="https://ant.design">{item.team_name}</a>}
+                      description={item.desc}
                     />
                   </List.Item>
                 )}

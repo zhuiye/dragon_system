@@ -1,174 +1,149 @@
+import { getPlayers } from '@/services/ant-design-pro/player';
+import { postSignUp } from '@/services/ant-design-pro/sign';
 import { PageContainer } from '@ant-design/pro-layout';
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  InputNumber,
-  List,
-  Popconfirm,
-  Space,
-  Table,
-  Typography,
-  Avatar,
-  Modal,
-  Tag,
-  Select,
-} from 'antd';
+import { useRequest } from 'ahooks';
+import { Button, Modal, message, Table, List, Card, Tag } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import React, { useState } from 'react';
+import { history, useLocation } from 'umi';
 
-const personList = [
-  {
-    name: '陈恒承',
-    post: '领队',
-    age: '22',
-    gender: '男',
-    identify: '440882199701239155',
-  },
-  {
-    name: '队员2',
-    post: '鼓手',
-    age: 27,
-    gender: '男',
-    identify: '440882199701239155',
-  },
-];
+function generateLink(data: any) {
+  const link = [];
 
+  for (let item of data) {
+    link.push({
+      ...item,
+      key: item.sort_id + '-' + item.item_id,
+      binds: [],
+    });
+  }
+
+  return link;
+}
+
+const getOwnBinds = (key: any, data: any) => {
+  for (let item of data) {
+    if (item.key === key) {
+      return item.binds;
+    }
+  }
+  return [];
+};
+
+const show = (binds: [], player: any[]) => {
+  const playerFilter = player.filter((item: any) => binds.includes((item as any).player_id));
+  return playerFilter;
+};
 const MatchTeam: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentKey, setCurrentKey] = useState('');
 
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
-  };
+  const location: any = useLocation();
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+  // const
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
+  const item_sort_link = JSON.parse(location.query.item_sort_link);
+  const [links, setLink] = useState(generateLink(item_sort_link));
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  const onOk = () => {
+    setIsModalOpen(false);
+
+    const cloneLinks = structuredClone(links);
+    for (let item of cloneLinks) {
+      if (item.key === currentKey) {
+        item.binds = selectedRowKeys;
+      }
+    }
+    setLink(cloneLinks);
+
+    setSelectedRowKeys([]);
+    setCurrentKey('');
+  };
+
+  const columns: ColumnsType<any> = [
+    {
+      title: '队员姓名',
+      dataIndex: 'player_name',
+    },
+  ];
+
+  const { data = [] } = useRequest(() => getPlayers({}));
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
+  const confirm = async () => {
+    await postSignUp({
+      competition_id: location.query.competition_id,
+      team_id: '1',
+      player_ids: '这个参数好像无意义',
+      item_relation: JSON.stringify(links),
+      submit_time: '1000000',
+    });
+    message.success('成功提交报名信息');
+
+    history.goBack();
+  };
+
   return (
-    <PageContainer title={<Button type="primary">提交报名</Button>}>
+    <PageContainer
+      title={
+        <Button type="primary" onClick={confirm}>
+          提交报名
+        </Button>
+      }
+    >
       <Modal
         destroyOnClose
         title="请选择参赛人员"
         visible={isModalOpen}
-        onOk={handleOk}
+        onOk={onOk}
         onCancel={handleCancel}
       >
-        <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-          <Select
-            placeholder="请选择参赛人员"
-            style={{ width: '100%' }}
-            onChange={handleChange}
-            options={[
-              {
-                value: 'jack',
-                label: '陈恒承',
-              },
-              {
-                value: 'lucy',
-                label: '路西',
-              },
-
-              {
-                value: 'yinimg',
-                label: '一名',
-              },
-            ]}
-          />
-          <Select
-            style={{ width: '100%' }}
-            placeholder="请分配职位"
-            onChange={handleChange}
-            options={[
-              {
-                value: 'jack',
-                label: '领队',
-              },
-              {
-                value: 'lucy',
-                label: '鼓手',
-              },
-            ]}
-          />
-        </Space>
+        <Table rowKey="player_id" rowSelection={rowSelection} columns={columns} dataSource={data} />
       </Modal>
-      <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-        <Card
-          title="100米直道-男子组12人"
-          extra={
-            <Button type="primary" onClick={showModal}>
-              +
-            </Button>
-          }
-        >
-          <List
-            className="demo-loadmore-list"
-            itemLayout="horizontal"
-            dataSource={personList}
-            renderItem={(item) => (
-              <List.Item
-                actions={[
-                  <a key="list-loadmore-more" onClick={() => {}}>
-                    删除
-                  </a>,
-                ]}
+
+      <Card>
+        <List
+          itemLayout="horizontal"
+          dataSource={links}
+          renderItem={(item: any) => (
+            <List.Item>
+              <List.Item.Meta
+                description={
+                  <div>
+                    {show(getOwnBinds(item.sort_id + '-' + item.item_id, links), data).map(
+                      (player: any) => {
+                        return <Tag color="green">{player.player_name}</Tag>;
+                      },
+                    )}
+                  </div>
+                }
+                title={`${item.item_name} ${item.sort_name}`}
+              />
+              <Button
+                onClick={() => {
+                  setCurrentKey(item.sort_id + '-' + item.item_id);
+                  setIsModalOpen(true);
+                }}
               >
-                <List.Item.Meta
-                  avatar={<Avatar size="large" />}
-                  title={<a href="https://ant.design">{item.name}</a>}
-                  description={
-                    <Space>
-                      <Tag color="red">{item.post}</Tag>
-                      <Tag color="gray">{item.identify}</Tag>
-                    </Space>
-                  }
-                />
-              </List.Item>
-            )}
-          />
-        </Card>
-        <Card
-          title="100米直道-女子组12人"
-          extra={
-            <Button type="primary" onClick={() => {}}>
-              添加参赛人员
-            </Button>
-          }
-        >
-          <List
-            className="demo-loadmore-list"
-            itemLayout="horizontal"
-            dataSource={personList}
-            renderItem={(item) => (
-              <List.Item
-                actions={[
-                  <a key="list-loadmore-more" onClick={() => {}}>
-                    删除
-                  </a>,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={<Avatar size="large" />}
-                  title={<a href="https://ant.design">{item.name}</a>}
-                  description={
-                    <Space>
-                      <Tag color="red">{item.post}</Tag>
-                      <Tag color="gray">{item.identify}</Tag>
-                    </Space>
-                  }
-                />
-              </List.Item>
-            )}
-          />
-        </Card>
-      </Space>
+                添加参赛人员
+              </Button>
+            </List.Item>
+          )}
+        />
+      </Card>
     </PageContainer>
   );
 };

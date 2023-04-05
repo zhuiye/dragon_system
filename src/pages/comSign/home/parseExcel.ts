@@ -1,12 +1,15 @@
 import * as xlsx from 'xlsx';
 
 interface Person {
-  name: string;
+  player_name: string;
+  gender: number;
+  phone_number: string;
   age: number;
-  avatar: string;
-  occupation: string;
-  id: string;
-  phone: string;
+  identify_number: string;
+  post_id: number;
+  image_url: string;
+  is_register_success: number;
+  nationality: string;
 }
 
 function parseExcel(file: File): Promise<Person[]> {
@@ -19,14 +22,15 @@ function parseExcel(file: File): Promise<Person[]> {
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = xlsx.utils.sheet_to_json(sheet);
         const people = rows.map((row: any) => ({
-          name: row['姓名'],
+          player_name: row['姓名'],
+          gender: row['性别'],
           age: parseInt(row['年龄']),
-          avatar: row['头像'],
-          occupation: row['职业'],
-          id: row['身份证号码'],
-          phone: row['手机号码'],
+          image_url: row['头像地址'],
+          identify_number: row['身份证号码'],
+          phone_number: row['手机号码'],
+          nationality: row['民族'],
         }));
-        resolve(people);
+        resolve(people as any);
       } else {
         reject(new Error('Failed to read file'));
       }

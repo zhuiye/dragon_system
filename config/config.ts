@@ -126,8 +126,8 @@ export default defineConfig({
     },
     {
       path: '/comSign',
-      name: '报名页面',
-      icon: 'dashboard',
+      // name: '报名页面',
+      // icon: 'dashboard',
       routes: [
         {
           name: '我的',
@@ -170,23 +170,23 @@ export default defineConfig({
         // },
       ],
     },
-    {
-      path: '/assign',
-      name: '赛道分配',
-      icon: 'dashboard',
-      routes: [
-        {
-          name: '分配界面',
-          path: '/assign/detail',
-          component: './assign/detail',
-        },
-        // {
-        //   name: '详情页',
-        //   path: '/check/detail',
-        //   component: './check/detail',
-        // },
-      ],
-    },
+    // {
+    //   path: '/assign',
+    //   name: '赛道分配',
+    //   icon: 'dashboard',
+    //   routes: [
+    //     {
+    //       name: '分配界面',
+    //       path: '/assign/detail',
+    //       component: './assign/detail',
+    //     },
+    //     // {
+    //     //   name: '详情页',
+    //     //   path: '/check/detail',
+    //     //   component: './check/detail',
+    //     // },
+    //   ],
+    // },
     {
       path: '/competitor',
       name: '编排管理',
