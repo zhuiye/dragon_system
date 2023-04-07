@@ -1,86 +1,90 @@
-import React, { useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import {
-  Form,
-  Input,
-  Button,
-  Radio,
-  Select,
-  Cascader,
-  DatePicker,
-  InputNumber,
-  TreeSelect,
-  Switch,
-  Checkbox,
-  Upload,
-  Card,
-} from 'antd';
-import { PageContainer } from '@ant-design/pro-layout';
+import ProForm, { ProFormRadio, ProFormText } from '@ant-design/pro-form';
+import { Col, message, Row, Space } from 'antd';
+import { useState } from 'react';
 
-const { TextArea } = Input;
+type LayoutType = Parameters<typeof ProForm>[0]['layout'];
+const LAYOUT_TYPE_HORIZONTAL = 'horizontal';
 
-import type { DatePickerProps } from 'antd';
-// import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+const waitTime = (time: number = 100) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, time);
+  });
+};
 
-function Index() {
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
-  };
+export default () => {
+  const [formLayoutType, setFormLayoutType] = useState<LayoutType>(LAYOUT_TYPE_HORIZONTAL);
+
+  const formItemLayout =
+    formLayoutType === LAYOUT_TYPE_HORIZONTAL
+      ? {
+          labelCol: { span: 4 },
+          wrapperCol: { span: 14 },
+        }
+      : null;
 
   return (
-    <PageContainer
-      title="成绩录入页面"
-      content={
-        <pre>
-          CREATE TABLE IF NOT EXISTS `competition_score`( `competition_id` int ,
-          `competition_item_id` INT UNSIGNED, `competition_item_inner_id` INT, `team_id` INT
-          UNSIGNED, `track_no` INT UNSIGNED # 1,2,3,4,5,6,7,8 `competition_round_type` INT, # 0
-          预赛，1 复赛，2半决，3排位赛，4小半决，5 决赛 `competition_round_number` INT, // 第几组
-          `score` INT, `submit_time` BIGINT, PRIMARY KEY ( `player_id` ) )ENGINE=InnoDB DEFAULT
-          CHARSET=utf8;
-        </pre>
-      }
+    <ProForm<{
+      name: string;
+      company?: string;
+      useMode?: string;
+    }>
+      {...formItemLayout}
+      layout={formLayoutType}
+      submitter={{
+        render: (props, doms) => {
+          return formLayoutType === LAYOUT_TYPE_HORIZONTAL ? (
+            <Row>
+              <Col span={14} offset={4}>
+                <Space>{doms}</Space>
+              </Col>
+            </Row>
+          ) : (
+            doms
+          );
+        },
+      }}
+      onFinish={async (values) => {
+        await waitTime(2000);
+        console.log(values);
+        message.success('提交成功');
+      }}
+      params={{}}
+      request={async () => {
+        await waitTime(100);
+        return {
+          name: '蚂蚁设计有限公司',
+          useMode: 'chapter',
+        };
+      }}
     >
-      <Card>
-        <Form>
-          <Form.Item label="比赛名">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="项目名">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="团队名">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="轮次">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="组号">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="输入成绩">
-            <Input />
-          </Form.Item>
-
-          <Button type="primary">Button</Button>
-        </Form>
-      </Card>
-    </PageContainer>
+      <ProFormRadio.Group
+        style={{
+          margin: 16,
+        }}
+        label="标签布局"
+        radioType="button"
+        fieldProps={{
+          value: formLayoutType,
+          onChange: (e) => setFormLayoutType(e.target.value),
+        }}
+        options={['horizontal', 'vertical', 'inline']}
+      />
+      <ProFormText
+        width="md"
+        name="name"
+        label="签约客户名称"
+        tooltip="最长为 24 位"
+        placeholder="请输入名称"
+      />
+      <ProFormText width="md" name="company" label="我方公司名称" placeholder="请输入名称" />
+      <ProFormText
+        name={['contract', 'name']}
+        width="md"
+        label="合同名称"
+        placeholder="请输入名称"
+      />
+    </ProForm>
   );
-}
-
-export default Index;
+};

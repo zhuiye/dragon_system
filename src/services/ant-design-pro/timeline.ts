@@ -9,29 +9,29 @@ export interface SignUp {
   status: number;
 }
 /** 此处后端没有提供注释 GET /api/competition */
-export async function getSignUp(options?: { [key: string]: any }) {
-  return request<any[]>('/dragon-api/sign-up', {
+export async function getTimeline(options?: { [key: string]: any }) {
+  return request<any[]>('/dragon-api/timeline', {
     method: 'GET',
     params: options ?? {},
   }).then((res: any) => res.data);
 }
 
-export async function getSignUpCount(options?: { [key: string]: any }) {
-  return request<any[]>('/dragon-api/sign-up/count', {
-    method: 'GET',
-    params: options ?? {},
-  }).then((res: any) => res.data);
-}
-
-export async function postSignUp(description: { [key: string]: any }) {
-  return request('/dragon-api/sign-up', {
+export async function generateTimeLine(description: { [key: string]: any }) {
+  return request('/dragon-api/timeline/generate', {
     method: 'POST',
     data: description,
   });
 }
-// 更新状态
-export async function updateSignUp(description: { [key: string]: any }) {
-  return request<Omit<any, 'team_id'>>('/dragon-api/sign-up', {
+
+export async function generateTimeLineSort(options?: { [key: string]: any }) {
+  return request<any[]>('/dragon-api/timeline/sort', {
+    method: 'GET',
+    params: options ?? {},
+  }).then((res: any) => res.data);
+}
+
+export async function updateTimeLine(description: { [key: string]: any }) {
+  return request<any>('/dragon-api/timeline', {
     method: 'PATCH',
     data: description,
   });

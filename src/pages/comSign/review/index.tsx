@@ -1,98 +1,80 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, List, Space, Avatar, Modal, Tag, Select } from 'antd';
 import React, { useState } from 'react';
+import { Button, Card, List, Modal, Space, Table, Tag, Typography, Form, Input, Radio } from 'antd';
+import { PageContainer } from '@ant-design/pro-layout';
+import { useRequest } from 'ahooks';
+import { history } from 'umi';
+import { getSignUp } from '@/services/ant-design-pro/sign';
 
-const personList = [
+const statusArr = ['未审核', '已通过', '未通过'];
+
+const columns = [
   {
-    name: '陈恒承',
-    post: '领队',
-    age: '22',
-    gender: '男',
-    identify: '440882199701239155',
+    title: '赛事名',
+    dataIndex: 'competitions',
+    key: 'competitions',
+    render: (competitions: any) => {
+      return <Typography.Text>{competitions.name}</Typography.Text>;
+    },
   },
   {
-    name: '队员2',
-    post: '鼓手',
-    age: 27,
-    gender: '男',
-    identify: '440882199701239155',
+    title: '内容',
+    dataIndex: 'item_relation',
+    key: 'item_relation',
+    render: (data: any) =>
+      data.map((it: any) => (
+        <Tag color="red">
+          {it.item_name} {it.sort_name}
+        </Tag>
+      )),
+  },
+  {
+    title: '审核状态',
+    dataIndex: 'status',
+    key: 'status',
+    render: (data: any) => <Tag color="green">{statusArr[data]}</Tag>,
+  },
+
+  {
+    title: '操作',
+    dataIndex: 'remark',
+    key: 'remark',
+    render: (a: any, record: any) => {
+      const query = {
+        sign_up_id: record.sign_up_id,
+        item_relation: JSON.stringify(record.item_relation),
+      };
+      return (
+        <Space>
+          <Button
+            disabled={record.status === 1}
+            type="primary"
+            onClick={() => {
+              history.push({
+                pathname: '/review/home/detail',
+                query,
+              });
+            }}
+          >
+            审核
+          </Button>
+        </Space>
+      );
+    },
   },
 ];
 
-const MatchTeam: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
-  };
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+function Index() {
+  const { data = [] } = useRequest(getSignUp);
   return (
     <PageContainer>
-      <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-        <Card title="100米直道-男子组12人">
-          <List
-            className="demo-loadmore-list"
-            itemLayout="horizontal"
-            dataSource={personList}
-            renderItem={(item) => (
-              <List.Item
-                actions={
-                  [
-                    // <a key="list-loadmore-more" onClick={() => {}}>
-                    //   删除
-                    // </a>,
-                  ]
-                }
-              >
-                <List.Item.Meta
-                  avatar={<Avatar size="large" />}
-                  title={<a href="https://ant.design">{item.name}</a>}
-                  description={
-                    <Space>
-                      <Tag color="red">{item.post}</Tag>
-                      <Tag color="gray">{item.identify}</Tag>
-                    </Space>
-                  }
-                />
-              </List.Item>
-            )}
-          />
-        </Card>
-        <Card title="100米直道-女子组12人">
-          <List
-            className="demo-loadmore-list"
-            itemLayout="horizontal"
-            dataSource={personList}
-            renderItem={(item) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={<Avatar size="large" />}
-                  title={<a href="https://ant.design">{item.name}</a>}
-                  description={
-                    <Space>
-                      <Tag color="red">{item.post}</Tag>
-                      <Tag color="gray">{item.identify}</Tag>
-                    </Space>
-                  }
-                />
-              </List.Item>
-            )}
-          />
-        </Card>
-      </Space>
+      <Table
+        dataSource={data}
+        columns={columns}
+        pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
+        bordered
+      />
     </PageContainer>
   );
-};
+}
 
-export default MatchTeam;
+export default Index;

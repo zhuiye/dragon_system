@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Button, message, Select, Space, Table } from 'antd';
+import { Button, Card, message, Select, Space, Table, Tag } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import {
   ModalForm,
@@ -18,9 +18,9 @@ import {
   getCompetitionSort,
   delCompetition,
 } from '@/services/ant-design-pro/competition';
-import ProTable from '@ant-design/pro-table';
 import moment from 'moment';
 import useRequest from '@ahooksjs/use-request';
+import VerticalSpace from '@/components/VerticalSpace';
 
 function getName(propName: string, returnPropName: string, id: any, data: any[]) {
   for (let item of data) {
@@ -46,64 +46,66 @@ function Index() {
     setList(selectList.filter((_, idx) => id === idx));
   };
 
-  const columns: ProColumns<Competition>[] = [
+  const columns: any[] = [
     {
       title: '赛事活动',
       dataIndex: 'name',
       key: 'name',
     },
-    {
-      title: '内容说明',
-      dataIndex: 'content',
-      key: 'content',
-    },
+
     {
       title: '举行项',
       dataIndex: 'item_sort_link',
       key: 'item_sort_link',
       render: (text: any) => {
-        const obj = JSON.parse(text);
-
-        console.log(obj);
-        return obj.map((item: any, index: number) => {
-          return <div key={index}> {item.item_name + '-----' + item.sort_name}</div>;
-        });
+        return (
+          <Space>
+            {text.map((item: any, index: number) => {
+              return (
+                <Tag key={index} color="red">
+                  {item.item_name + ' ' + item.sort_name}
+                </Tag>
+              );
+            })}
+          </Space>
+        );
       },
     },
     {
       title: '比赛报名时间',
       dataIndex: 'sign_up_start_time',
       key: 'sign_up_start_time',
-      render: (_time, entity) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
+      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '比赛报名截至时间',
       dataIndex: 'sign_up_end_time',
       key: 'sign_up_end_time',
-      render: (_time, entity) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
+      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '比赛开始时间',
       dataIndex: 'start_time',
       key: 'start_time',
-      render: (_time, entity) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
+      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '比赛结束时间',
       dataIndex: 'end_time',
       key: 'end_time',
-      render: (_time, entity) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
+      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '操作',
       dataIndex: 'id',
       key: 'id',
-      render: (id, entity) => {
+      render: (id: any, entity: any) => {
         return (
           <Button
             onClick={async () => {
               await delCompetition({ id });
-              message.success('添加成功');
+              run();
+              message.success('删除成功');
               actionRef.current?.reload();
             }}
           >
@@ -135,6 +137,7 @@ function Index() {
       });
       hide();
       message.success('Added successfully');
+      run();
       return true;
     } catch (error) {
       hide();
@@ -142,6 +145,8 @@ function Index() {
       return false;
     }
   };
+
+  const { data = [], run } = useRequest(getCompetitions);
 
   const add = useCallback(() => {
     setList([
@@ -156,10 +161,8 @@ function Index() {
   }, [selectList, sortList, itemList, itemId, sortId]);
   return (
     <PageContainer>
-      <ProTable<Competition, API.PageParams>
-        rowKey="key"
-        actionRef={actionRef}
-        toolBarRender={() => [
+      <Card>
+        <VerticalSpace>
           <Button
             type="primary"
             key="primary"
@@ -168,102 +171,110 @@ function Index() {
             }}
           >
             <PlusOutlined /> 添加
-          </Button>,
-        ]}
-        search={{
-          labelWidth: 120,
-        }}
-        request={getCompetitions}
-        columns={columns}
-      />
-      <ModalForm
-        title={'添加组织赛事活动'}
-        width="600px"
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.RuleListItem);
-          if (success) {
-            handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: ' name is required',
-            },
-          ]}
-          width="xl"
-          name="name"
-          label="赛事组织名"
-          tooltip="最长50个字符"
-          placeholder="请输入名称"
-        />
-        <Space size={24}>
-          <Select
-            style={{ width: '150px' }}
-            onChange={(val: any) => {
-              setItemId(val);
-            }}
-            placeholder="项目"
-            value={itemId}
-            options={itemList.map((item: any) => ({ label: item.item_name, value: item.item_id }))}
-          />
-          <Select
-            style={{ width: '150px' }}
-            onChange={(val: any) => {
-              setSortId(val);
-            }}
-            value={sortId}
-            placeholder="子项目"
-            options={sortList.map((item: any) => ({ label: item.sort_name, value: item.sort_id }))}
-          />
-          <Button onClick={add} type="ghost">
-            绑定项目(可多次添加)
           </Button>
-        </Space>
-        <div>
-          {selectList.map((item: any, index) => {
-            return (
-              <div key={index}>
-                <Space>
-                  <span> {item.item_name + '----' + item.sort_name} </span>
-                  <Button
-                    onClick={() => {
-                      del(index);
-                    }}
-                  >
-                    -
-                  </Button>
-                </Space>
-              </div>
-            );
-          })}
-        </div>
-        <div style={{ height: 8 }} />
-        <ProFormTextArea
-          width="xl"
-          name="content"
-          label="赛事详细内容"
-          tooltip="不可为空"
-          placeholder="请输入赛事详细内容"
-        />
-        <ProFormDateTimeRangePicker
-          label="比赛报名开始时间~比赛报名截止时间"
-          name="sign_up_time"
-          initialValue={[moment('2015-01-01', 'YYYY-MM-DD'), moment('2015-01-01', 'YYYY-MM-DD')]}
-        />
-        <ProFormDateTimeRangePicker
-          label="比赛开始时间~比赛结束时间"
-          name="competition_time"
-          initialValue={[moment('2015-01-01', 'YYYY-MM-DD'), moment('2015-01-01', 'YYYY-MM-DD')]}
-        />
-      </ModalForm>
+          <Table rowKey="key" dataSource={data} columns={columns} />
+          <ModalForm
+            title={'添加组织赛事活动'}
+            width="600px"
+            visible={createModalVisible}
+            onVisibleChange={handleModalVisible}
+            onFinish={async (value) => {
+              const success = await handleAdd(value as API.RuleListItem);
+              if (success) {
+                handleModalVisible(false);
+                if (actionRef.current) {
+                  actionRef.current.reload();
+                }
+              }
+            }}
+          >
+            <ProFormText
+              rules={[
+                {
+                  required: true,
+                  message: ' name is required',
+                },
+              ]}
+              width="xl"
+              name="name"
+              label="赛事组织名"
+              tooltip="最长50个字符"
+              placeholder="请输入名称"
+            />
+            <Space size={24}>
+              <Select
+                style={{ width: '150px' }}
+                onChange={(val: any) => {
+                  setItemId(val);
+                }}
+                placeholder="项目"
+                value={itemId}
+                options={itemList.map((item: any) => ({
+                  label: item.item_name,
+                  value: item.item_id,
+                }))}
+              />
+              <Select
+                style={{ width: '150px' }}
+                onChange={(val: any) => {
+                  setSortId(val);
+                }}
+                value={sortId}
+                placeholder="子项目"
+                options={sortList.map((item: any) => ({
+                  label: item.sort_name,
+                  value: item.sort_id,
+                }))}
+              />
+              <Button onClick={add} type="ghost">
+                绑定项目(可多次添加)
+              </Button>
+            </Space>
+            <div>
+              {selectList.map((item: any, index) => {
+                return (
+                  <div key={index}>
+                    <Space>
+                      <Tag color="red"> {item.item_name + ' ' + item.sort_name} </Tag>
+                      <Button
+                        onClick={() => {
+                          del(index);
+                        }}
+                      >
+                        -
+                      </Button>
+                    </Space>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ height: 8 }} />
+            <ProFormTextArea
+              width="xl"
+              name="content"
+              label="赛事详细内容"
+              tooltip="不可为空"
+              placeholder="请输入赛事详细内容"
+            />
+            <ProFormDateTimeRangePicker
+              label="比赛报名开始时间~比赛报名截止时间"
+              name="sign_up_time"
+              initialValue={[
+                moment('2015-01-01', 'YYYY-MM-DD'),
+                moment('2015-01-01', 'YYYY-MM-DD'),
+              ]}
+            />
+            <ProFormDateTimeRangePicker
+              label="比赛开始时间~比赛结束时间"
+              name="competition_time"
+              initialValue={[
+                moment('2015-01-01', 'YYYY-MM-DD'),
+                moment('2015-01-01', 'YYYY-MM-DD'),
+              ]}
+            />
+          </ModalForm>
+        </VerticalSpace>
+      </Card>
     </PageContainer>
   );
 }

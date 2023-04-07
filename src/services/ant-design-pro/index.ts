@@ -8,10 +8,13 @@ import * as competition from './competition';
 import * as team from './team';
 import * as player from './player';
 
+import * as timeline from './timeline';
+
 export default {
   api,
   login,
   competition,
   team,
   player,
+  timeline,
 };

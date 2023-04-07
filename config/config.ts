@@ -86,51 +86,50 @@ export default defineConfig({
         },
       ],
     },
+    // {
+    //   path: '/check',
+    //   name: '比赛检录',
+    //   icon: 'dashboard',
+    //   routes: [
+    //     {
+    //       path: '/check',
+    //       redirect: '/check/list',
+    //     },
+    //     {
+    //       name: '管理页',
+    //       path: '/check/list',
+    //       component: './check/list',
+    //     },
+    //     {
+    //       name: '详情页',
+    //       path: '/check/detail',
+    //       component: './check/detail',
+    //     },
+    //   ],
+    // },
     {
-      path: '/check',
-      name: '比赛检录',
+      path: '/review',
+      name: '审核管理',
       icon: 'dashboard',
       routes: [
         {
-          path: '/check',
-          redirect: '/check/list',
+          name: '审核',
+          path: '/review/home',
+          component: './review/home',
         },
         {
-          name: '管理页',
-          path: '/check/list',
-          component: './check/list',
+          path: '/review/home/detail',
+          component: './review/detail',
         },
-        {
-          name: '详情页',
-          path: '/check/detail',
-          component: './check/detail',
-        },
-      ],
-    },
-    {
-      path: '/compRule',
-      name: '竞赛规程设置',
-      icon: 'dashboard',
-      routes: [
-        {
-          name: '参赛项目设置',
-          path: '/compRule/home',
-          component: './compRule/compItemSetting',
-        },
-        // {
-        //   name: '详情页',
-        //   path: '/check/detail',
-        //   component: './check/detail',
-        // },
       ],
     },
     {
       path: '/comSign',
-      // name: '报名页面',
-      // icon: 'dashboard',
+      name: '报名',
+      icon: 'dashboard',
       routes: [
         {
-          name: '我的',
+          name: '我的队伍',
           path: '/comSign',
           component: './comSign/home',
         },
@@ -142,9 +141,13 @@ export default defineConfig({
           path: '/comSign/matchTeam',
           component: './comSign/MatchTeam',
         },
+        // {
+        //   path: '/comSign/review',
+        //   component: './comSign/review',
+        // },
         {
-          path: '/comSign/review',
-          component: './comSign/review',
+          path: '/comSign/review/detail',
+          component: './comSign/review/reviewDetail',
         },
         // {
         //   name: '详情页',
@@ -163,11 +166,14 @@ export default defineConfig({
           path: '/score/home',
           component: './score/home',
         },
-        // {
-        //   name: '详情页',
-        //   path: '/check/detail',
-        //   component: './check/detail',
-        // },
+        {
+          path: '/score/home/detail',
+          component: './score/detail',
+        },
+        {
+          path: '/score/home/input',
+          component: './score/input',
+        },
       ],
     },
     // {
@@ -193,9 +199,26 @@ export default defineConfig({
       icon: 'dashboard',
       routes: [
         {
-          name: '比赛时间管理',
-          path: '/competitor/home',
+          name: '赛制设置',
+          path: '/competitor/round',
+          component: './competitor/round',
+        },
+        {
+          path: '/competitor/round/detail',
+          component: './competitor/round/detail',
+        },
+        {
+          name: '时间编排',
+          path: '/competitor/time',
           component: './competitor/time',
+        },
+        {
+          path: '/competitor/time/detail',
+          component: './competitor/time/detail',
+        },
+        {
+          path: '/competitor/time/assign',
+          component: './competitor/time/assign',
         },
         {
           path: '/competitor/create',

@@ -17,6 +17,14 @@ const columns = [
     },
   },
   {
+    title: '申请队伍',
+    dataIndex: 'teams',
+    key: 'teams',
+    render: (items: any) => {
+      return <Tag>{items[0].team_name}</Tag>;
+    },
+  },
+  {
     title: '内容',
     dataIndex: 'item_relation',
     key: 'item_relation',
@@ -46,15 +54,16 @@ const columns = [
       return (
         <Space>
           <Button
+            disabled={record.status === 1}
             type="primary"
             onClick={() => {
               history.push({
-                pathname: '/comSign/review/detail',
+                pathname: '/review/home/detail',
                 query,
               });
             }}
           >
-            详情
+            审核
           </Button>
         </Space>
       );

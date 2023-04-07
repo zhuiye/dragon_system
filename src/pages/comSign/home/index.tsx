@@ -103,7 +103,7 @@ function Index() {
                       <a
                         key="list-loadmore-more"
                         onClick={() => {
-                          history.push(`comSign/teamDetail?team_id=${item.team_id}`);
+                          history.push(`/comSign/teamDetail?team_id=${item.team_id}`);
                         }}
                       >
                         详情

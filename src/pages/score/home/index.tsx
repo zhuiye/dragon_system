@@ -1,84 +1,79 @@
 import React, { useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import {
-  Form,
-  Input,
-  Button,
-  Radio,
-  Select,
-  Cascader,
-  DatePicker,
-  InputNumber,
-  TreeSelect,
-  Switch,
-  Checkbox,
-  Upload,
-  Card,
-} from 'antd';
+import { Button, Card, List, Modal, Space, Table, Tag, Typography, Form, Input, Radio } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
+import { useRequest } from 'ahooks';
+import { getCompetitions } from '@/services/ant-design-pro/competition';
+import { history } from 'umi';
+import { useQuery } from '@/components/hooks/useQuery';
 
-const { TextArea } = Input;
+const columns = [
+  {
+    title: '赛事名',
+    dataIndex: 'name',
+    key: 'item',
+  },
+  {
+    title: '内容',
+    dataIndex: 'item_sort_link',
+    key: 'item_sort_link',
+    render: (data: any) =>
+      data.map((it: any) => (
+        <Tag color="red">
+          {it.item_name} {it.sort_name}
+        </Tag>
+      )),
+  },
 
-import type { DatePickerProps } from 'antd';
-// import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+  {
+    title: '设置赛制',
+    dataIndex: 'remark',
+    key: 'remark',
+    render: (a: any, record: any) => {
+      const query = {
+        name: record.name,
+        competition_id: record.id,
+        item_sort_link: JSON.stringify(record.item_sort_link),
+      };
+      return (
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => {
+              history.push({
+                pathname: '/score/home/score',
+                query,
+              });
+            }}
+          >
+            录入成绩
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              history.push({
+                pathname: '/score/home/detail',
+                query,
+              });
+            }}
+          >
+            详情
+          </Button>
+        </Space>
+      );
+    },
+  },
+];
 
 function Index() {
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
-  };
-
+  const { data = [] } = useRequest(getCompetitions);
   return (
-    <PageContainer
-      title="成绩录入页面"
-      content={
-        <pre>
-          CREATE TABLE IF NOT EXISTS `competition_score`( `competition_id` int ,
-          `competition_item_id` INT UNSIGNED, `competition_item_inner_id` INT, `team_id` INT
-          UNSIGNED, `track_no` INT UNSIGNED # 1,2,3,4,5,6,7,8 `competition_round_type` INT, # 0
-          预赛，1 复赛，2半决，3排位赛，4小半决，5 决赛 `competition_round_number` INT, // 第几组
-          `score` INT, `submit_time` BIGINT, PRIMARY KEY ( `player_id` ) )ENGINE=InnoDB DEFAULT
-          CHARSET=utf8;
-        </pre>
-      }
-    >
-      <Card>
-        <Form>
-          <Form.Item label="比赛名">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="项目名">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="团队名">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="轮次">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="组号">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="输入成绩">
-            <Input />
-          </Form.Item>
-
-          <Button type="primary">Button</Button>
-        </Form>
-      </Card>
+    <PageContainer>
+      <Table
+        dataSource={data}
+        columns={columns}
+        pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
+        bordered
+      />
     </PageContainer>
   );
 }

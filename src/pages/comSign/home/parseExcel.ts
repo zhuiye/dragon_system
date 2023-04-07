@@ -12,6 +12,18 @@ interface Person {
   nationality: string;
 }
 
+const postMap = (key: string) => {
+  const map = new Map();
+  map.set('领队', 0);
+  map.set('教练', 1);
+  map.set('鼓手', 2);
+  map.set('舵手', 3);
+  map.set('划手', 4);
+  map.set('替补', 5);
+
+  return map.get(key);
+};
+
 function parseExcel(file: File): Promise<Person[]> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -29,6 +41,8 @@ function parseExcel(file: File): Promise<Person[]> {
           identify_number: row['身份证号码'],
           phone_number: row['手机号码'],
           nationality: row['民族'],
+          post_name: row['职位'],
+          post_id: postMap(row['职位']),
         }));
         resolve(people as any);
       } else {

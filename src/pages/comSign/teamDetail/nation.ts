@@ -58,4 +58,9 @@ const nations = [
 
 const nationsArray = nations.map((nation) => ({ label: nation, value: nation }));
 
-export { nationsArray };
+const postArray = ['领队', '教练', '鼓手', '舵手', '划手', '替补'].map((post, index) => ({
+  label: post,
+  value: index,
+}));
+
+export { nationsArray, postArray };
