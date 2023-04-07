@@ -13,7 +13,7 @@ const columns = [
     dataIndex: 'competitions',
     key: 'competitions',
     render: (competitions: any) => {
-      return <Typography.Text>{competitions.name}</Typography.Text>;
+      return <Typography.Text>{competitions?.name}</Typography.Text>;
     },
   },
   {
@@ -21,7 +21,7 @@ const columns = [
     dataIndex: 'teams',
     key: 'teams',
     render: (items: any) => {
-      return <Tag>{items[0].team_name}</Tag>;
+      return <Tag>{items[0]?.team_name}</Tag>;
     },
   },
   {

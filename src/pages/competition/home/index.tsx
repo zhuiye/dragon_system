@@ -260,16 +260,16 @@ function Index() {
               label="比赛报名开始时间~比赛报名截止时间"
               name="sign_up_time"
               initialValue={[
-                moment('2015-01-01', 'YYYY-MM-DD'),
-                moment('2015-01-01', 'YYYY-MM-DD'),
+                moment('2023-06-01', 'YYYY-MM-DD'),
+                moment('2023-06-03', 'YYYY-MM-DD'),
               ]}
             />
             <ProFormDateTimeRangePicker
               label="比赛开始时间~比赛结束时间"
               name="competition_time"
               initialValue={[
-                moment('2015-01-01', 'YYYY-MM-DD'),
-                moment('2015-01-01', 'YYYY-MM-DD'),
+                moment('2023-06-05', 'YYYY-MM-DD'),
+                moment('2023-06-06', 'YYYY-MM-DD'),
               ]}
             />
           </ModalForm>

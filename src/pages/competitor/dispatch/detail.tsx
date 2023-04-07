@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button, List, Modal, Space, Table, Tag, Typography, Card } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
-import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
 
 const fakeData = [
   {
@@ -93,7 +92,6 @@ function Index() {
 
   return (
     <PageContainer title="整体赛事时间安排" content={<div>此页面用于每轮比赛的赛道分配编排</div>}>
-      <Typography.Title>赛序，龙舟，时间，组次，赛道，队名，成绩，名次，备注</Typography.Title>
       {fakeData.map((item, index) => (
         <Card key={index}>
           <Typography.Title>{item.title}</Typography.Title>
@@ -105,7 +103,6 @@ function Index() {
           />
         </Card>
       ))}
-      {/*  */}
     </PageContainer>
   );
 }

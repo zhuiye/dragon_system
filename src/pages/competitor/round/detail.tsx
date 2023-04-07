@@ -10,10 +10,10 @@ import { generateTimeLine, getTimeline } from '@/services/ant-design-pro/timelin
 const columns = [
   {
     title: '比赛项目',
-    dataIndex: 'item_sort_link',
-    key: 'item_sort_link',
+    dataIndex: 'content_name',
+    key: 'content_name',
     render: (item: any) => {
-      return <Tag color="green">{`${item.item_name}  ${item.sort_name}`}</Tag>;
+      return <Tag color="green">{`${item} `}</Tag>;
     },
   },
   {
@@ -30,8 +30,8 @@ const columns = [
   },
   {
     title: '开始时间',
-    dataIndex: 'date',
-    key: 'date',
+    dataIndex: 'format_date',
+    key: 'format_date',
   },
 
   {
@@ -183,12 +183,14 @@ function Index() {
           )}
         />
       </Card>
-      <Table
-        dataSource={data}
-        columns={columns}
-        pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
-        bordered
-      />
+      <Card>
+        <Table
+          dataSource={data}
+          columns={columns}
+          pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
+          bordered
+        />
+      </Card>
     </PageContainer>
   );
 }

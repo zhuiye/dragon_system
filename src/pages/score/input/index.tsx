@@ -1,90 +1,87 @@
-import ProForm, { ProFormRadio, ProFormText } from '@ant-design/pro-form';
-import { Col, message, Row, Space } from 'antd';
-import { useState } from 'react';
+import { useQuery } from '@/components/hooks/useQuery';
+import { addScore } from '@/services/ant-design-pro/score';
+import { getSignUpCountTeams } from '@/services/ant-design-pro/sign';
+import { getTimeline } from '@/services/ant-design-pro/timeline';
+import { PageContainer } from '@ant-design/pro-layout';
+import { useRequest } from 'ahooks';
+import { Button, Card, Form, Input, InputNumber, Select, Timeline, message } from 'antd';
+import React from 'react';
 
-type LayoutType = Parameters<typeof ProForm>[0]['layout'];
-const LAYOUT_TYPE_HORIZONTAL = 'horizontal';
-
-const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
+const layout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 16 },
 };
 
-export default () => {
-  const [formLayoutType, setFormLayoutType] = useState<LayoutType>(LAYOUT_TYPE_HORIZONTAL);
+/* eslint-enable no-template-curly-in-string */
 
-  const formItemLayout =
-    formLayoutType === LAYOUT_TYPE_HORIZONTAL
-      ? {
-          labelCol: { span: 4 },
-          wrapperCol: { span: 14 },
-        }
-      : null;
+const App: React.FC = () => {
+  const [form] = Form.useForm();
+  const onFinish = (values: any) => {
+    console.log(values);
+  };
+
+  const query = useQuery();
+
+  //
+  const { data: times = [] } = useRequest(() =>
+    getTimeline({
+      competition_id: query.competition_id,
+    }),
+  );
+  const { data: teams = [] } = useRequest(() =>
+    getSignUpCountTeams({
+      competition_id: query.competition_id,
+    }),
+  );
+
+  const itemMap = times.map((item: any) => ({
+    label: item.content_name,
+    value: item.timeline_id,
+  }));
+
+  const teamsMap = teams.map((item: any) => ({
+    label: item.team_name,
+    value: item.team_id,
+  }));
+
+  const enter = async () => {
+    const { timeline_id, team_id, score } = form.getFieldsValue();
+    const data = times.find((it: any) => it.timeline_id === timeline_id);
+    await addScore({
+      competition_id: data.competition_id,
+      round_type: data.round_type,
+      group_number: data.group_number,
+      content_name: data.content_name,
+      team_id,
+      score: parseInt(score),
+    });
+    message.success('录入成功');
+    form.resetFields();
+  };
 
   return (
-    <ProForm<{
-      name: string;
-      company?: string;
-      useMode?: string;
-    }>
-      {...formItemLayout}
-      layout={formLayoutType}
-      submitter={{
-        render: (props, doms) => {
-          return formLayoutType === LAYOUT_TYPE_HORIZONTAL ? (
-            <Row>
-              <Col span={14} offset={4}>
-                <Space>{doms}</Space>
-              </Col>
-            </Row>
-          ) : (
-            doms
-          );
-        },
-      }}
-      onFinish={async (values) => {
-        await waitTime(2000);
-        console.log(values);
-        message.success('提交成功');
-      }}
-      params={{}}
-      request={async () => {
-        await waitTime(100);
-        return {
-          name: '蚂蚁设计有限公司',
-          useMode: 'chapter',
-        };
-      }}
-    >
-      <ProFormRadio.Group
-        style={{
-          margin: 16,
-        }}
-        label="标签布局"
-        radioType="button"
-        fieldProps={{
-          value: formLayoutType,
-          onChange: (e) => setFormLayoutType(e.target.value),
-        }}
-        options={['horizontal', 'vertical', 'inline']}
-      />
-      <ProFormText
-        width="md"
-        name="name"
-        label="签约客户名称"
-        tooltip="最长为 24 位"
-        placeholder="请输入名称"
-      />
-      <ProFormText width="md" name="company" label="我方公司名称" placeholder="请输入名称" />
-      <ProFormText
-        name={['contract', 'name']}
-        width="md"
-        label="合同名称"
-        placeholder="请输入名称"
-      />
-    </ProForm>
+    <PageContainer title="成绩录入">
+      <Card>
+        <Form {...layout} form={form}>
+          <Form.Item name="timeline_id">
+            <Select options={itemMap} placeholder="请选择比赛内容" />
+          </Form.Item>
+          <Form.Item name="team_id">
+            <Select options={teamsMap} placeholder="请选择参赛队伍" />
+          </Form.Item>
+          <Form.Item name="score">
+            <Input placeholder="请输入成绩" addonAfter="S" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" onClick={enter}>
+              录入
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+    </PageContainer>
   );
 };
+
+export default App;

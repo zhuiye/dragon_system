@@ -40,7 +40,7 @@ const columns = [
             type="primary"
             onClick={() => {
               history.push({
-                pathname: '/score/home/score',
+                pathname: '/score/home/input',
                 query,
               });
             }}

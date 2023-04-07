@@ -23,6 +23,13 @@ export async function getSignUpCount(options?: { [key: string]: any }) {
   }).then((res: any) => res.data);
 }
 
+export async function getSignUpCountTeams(options?: { [key: string]: any }) {
+  return request<any[]>('/dragon-api/sign-up/team', {
+    method: 'GET',
+    params: options ?? {},
+  }).then((res: any) => res.data);
+}
+
 export async function postSignUp(description: { [key: string]: any }) {
   return request('/dragon-api/sign-up', {
     method: 'POST',
