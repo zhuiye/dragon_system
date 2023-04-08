@@ -20,6 +20,13 @@ export async function getCompetitions(options?: { [key: string]: any }) {
     params: options || {},
   }).then((res: any) => res.data);
 }
+/** 此处后端没有提供注释 GET /api/competition */
+export async function getCompetitionsDispatch(options?: { [key: string]: any }) {
+  return request<Competition[]>('/dragon-api/competition/dispatch', {
+    method: 'GET',
+    params: options || {},
+  }).then((res: any) => res.data);
+}
 
 export async function addCompetition(description: { [key: string]: any }) {
   return request<Competition>('/dragon-api/competition', {
@@ -31,6 +38,13 @@ export async function addCompetition(description: { [key: string]: any }) {
 export async function delCompetition(description: { [key: string]: any }) {
   return request<Competition>('/dragon-api/competition', {
     method: 'Delete',
+    data: description,
+  });
+}
+
+export async function updateCompetition(description: { [key: string]: any }) {
+  return request<Competition>('/dragon-api/competition', {
+    method: 'Patch',
     data: description,
   });
 }

@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Button, Card, message, Select, Space, Table, Tag } from 'antd';
+import { Button, Card, message, Select, Space, Switch, Table, Tag } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import {
   ModalForm,
@@ -7,16 +7,15 @@ import {
   ProFormTextArea,
   ProFormDateTimeRangePicker,
 } from '@ant-design/pro-form';
-import { PlusOutlined } from '@ant-design/icons';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
-
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import type { ActionType } from '@ant-design/pro-table';
 import {
   getCompetitions,
   addCompetition,
-  Competition,
   getCompetitionItem,
   getCompetitionSort,
   delCompetition,
+  updateCompetition,
 } from '@/services/ant-design-pro/competition';
 import moment from 'moment';
 import useRequest from '@ahooksjs/use-request';
@@ -42,58 +41,78 @@ function Index() {
 
   const [selectList, setList] = useState<any[]>([]);
 
-  const del = (id: any) => {
-    setList(selectList.filter((_, idx) => id === idx));
+  const del = (key: any) => {
+    setList(selectList.filter((_, idx) => key !== _.key));
   };
+  const { data = [], run } = useRequest(getCompetitions);
 
   const columns: any[] = [
     {
-      title: '赛事活动',
+      title: '赛事',
       dataIndex: 'name',
       key: 'name',
     },
 
     {
-      title: '举行项',
+      title: '内容',
       dataIndex: 'item_sort_link',
       key: 'item_sort_link',
       render: (text: any) => {
         return (
-          <Space>
+          <VerticalSpace>
             {text.map((item: any, index: number) => {
               return (
-                <Tag key={index} color="red">
-                  {item.item_name + ' ' + item.sort_name}
-                </Tag>
+                <div key={index}>
+                  <Tag color="red">{item.item_name + ' ' + item.sort_name}</Tag>
+                </div>
               );
             })}
-          </Space>
+          </VerticalSpace>
         );
       },
     },
     {
-      title: '比赛报名时间',
+      title: '报名时间',
       dataIndex: 'sign_up_start_time',
       key: 'sign_up_start_time',
-      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
+      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD '),
     },
     {
-      title: '比赛报名截至时间',
+      title: '报名截至时间',
       dataIndex: 'sign_up_end_time',
       key: 'sign_up_end_time',
-      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
+      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD '),
     },
     {
       title: '比赛开始时间',
       dataIndex: 'start_time',
       key: 'start_time',
-      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
+      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD '),
     },
     {
       title: '比赛结束时间',
       dataIndex: 'end_time',
       key: 'end_time',
-      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD HH:mm:ss'),
+      render: (_time: any) => moment(parseInt(_time as any)).format('YYYY-MM-DD '),
+    },
+    {
+      title: '开启报名',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: any, record: any) => (
+        <Switch
+          checkedChildren="开启"
+          unCheckedChildren="关闭"
+          onClick={async () => {
+            await updateCompetition({
+              id: record.id,
+              status: status === 1 ? 0 : 1,
+            });
+            run();
+          }}
+          defaultChecked={status === 1}
+        />
+      ),
     },
     {
       title: '操作',
@@ -133,10 +152,11 @@ function Index() {
         sign_up_end_time,
         start_time,
         end_time,
+        status: 1,
         item_sort_link: JSON.stringify(selectList),
       });
       hide();
-      message.success('Added successfully');
+      message.success('创建成功');
       run();
       return true;
     } catch (error) {
@@ -146,12 +166,11 @@ function Index() {
     }
   };
 
-  const { data = [], run } = useRequest(getCompetitions);
-
   const add = useCallback(() => {
     setList([
       ...selectList,
       {
+        key: itemId + '-' + sortId,
         item_id: itemId,
         item_name: getName('item_id', 'item_name', itemId, itemList),
         sort_name: getName('sort_id', 'sort_name', sortId, sortList),
@@ -179,7 +198,7 @@ function Index() {
             visible={createModalVisible}
             onVisibleChange={handleModalVisible}
             onFinish={async (value) => {
-              const success = await handleAdd(value as API.RuleListItem);
+              const success = await handleAdd(value);
               if (success) {
                 handleModalVisible(false);
                 if (actionRef.current) {
@@ -230,25 +249,25 @@ function Index() {
                 绑定项目(可多次添加)
               </Button>
             </Space>
-            <div>
-              {selectList.map((item: any, index) => {
-                return (
-                  <div key={index}>
-                    <Space>
-                      <Tag color="red"> {item.item_name + ' ' + item.sort_name} </Tag>
-                      <Button
-                        onClick={() => {
-                          del(index);
-                        }}
-                      >
-                        -
-                      </Button>
-                    </Space>
-                  </div>
-                );
-              })}
+            <div style={{ marginTop: 8, marginBottom: 8, background: '#FFF1F0', padding: 8 }}>
+              <VerticalSpace>
+                {selectList.map((item: any, index) => {
+                  return (
+                    <div key={item.key}>
+                      <Space>
+                        <Tag color="red"> {item.item_name + ' ' + item.sort_name} </Tag>
+                        <CloseOutlined
+                          onClick={() => {
+                            del(item.key);
+                          }}
+                        />
+                      </Space>
+                    </div>
+                  );
+                })}
+              </VerticalSpace>
             </div>
-            <div style={{ height: 8 }} />
+
             <ProFormTextArea
               width="xl"
               name="content"

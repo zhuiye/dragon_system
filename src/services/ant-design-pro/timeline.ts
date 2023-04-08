@@ -30,6 +30,13 @@ export async function generateTimeLineSort(options?: { [key: string]: any }) {
   }).then((res: any) => res.data);
 }
 
+export async function generateTimeLineAssign(options?: { [key: string]: any }) {
+  return request<any[]>('/dragon-api/timeline/assign', {
+    method: 'GET',
+    params: options ?? {},
+  }).then((res: any) => res.data);
+}
+
 export async function updateTimeLine(description: { [key: string]: any }) {
   return request<any>('/dragon-api/timeline', {
     method: 'PATCH',

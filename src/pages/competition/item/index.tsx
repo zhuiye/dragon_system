@@ -127,9 +127,9 @@ function Index() {
           </Form.Item>
           <Form.Item label="性别" name="sort_gender">
             <Radio.Group>
-              <Radio value={0}>男</Radio>
-              <Radio value={1}>女</Radio>
-              <Radio value={2}>混合</Radio>
+              <Radio value="男">男</Radio>
+              <Radio value="女">女</Radio>
+              <Radio value="男女混合">男女混合</Radio>
             </Radio.Group>
           </Form.Item>
 

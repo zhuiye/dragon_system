@@ -86,5 +86,29 @@ const getRouteMap = (pathCount: number, groupRank: number) => {
   // if()
 };
 
-export { getRouteMap };
+function randomAssign(data: any[], m: number, n: number, race_track_number: number) {
+  // 随机打乱队伍的顺序
+  const shuffledData = data.sort(() => Math.random() - 0.5);
+  const result = [];
+  let assignedCount = 0;
+  for (let i = 0; i < n; i++) {
+    const assignedData = shuffledData.slice(assignedCount, assignedCount + m);
+    if (assignedData.length < m) {
+      break;
+    }
+    assignedCount += assignedData.length;
+    const group = {
+      group_number: i,
+      data: assignedData.map((item) => ({
+        team_name: item.team_name,
+        team_id: item.team_id,
+        path: Math.floor(Math.random() * race_track_number) + 1,
+      })),
+    };
+    result.push(group);
+  }
+  return result;
+}
+
+export { getRouteMap, randomAssign };
 export default generateSnakeGroup;

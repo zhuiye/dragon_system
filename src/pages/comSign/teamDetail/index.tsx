@@ -5,19 +5,15 @@ import { useRequest } from 'ahooks';
 import { delPlayer, getPlayers, updatePlayers } from '@/services/ant-design-pro/player';
 import { useQuery } from '@/components/hooks/useQuery';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card } from 'antd';
+import { Avatar, Card, Tag } from 'antd';
 
 type DataSourceType = {
   player_id: React.Key;
-  title?: string;
-  readonly?: string;
-  decs?: string;
   state?: string;
-  created_at?: string;
-  update_at?: string;
   children?: DataSourceType[];
 };
-
+const colors = ['gold', '#f50', 'lime', 'green', 'blue', 'gray'];
+const post_arr = ['领队', '教练', '鼓手', '舵手', '划手', '替补'];
 export default () => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
@@ -34,12 +30,20 @@ export default () => {
           rules: rowIndex > 1 ? [{ required: true, message: '此项为必填项' }] : [],
         };
       },
-      width: '15%',
     },
+    {
+      title: '头像',
+      dataIndex: 'image_url',
+      key: 'image_url',
+      editable: false,
+      render: (text: any) => {
+        return <Avatar src={`http://localhost:3000${text}`}></Avatar>;
+      },
+    },
+
     {
       title: '年龄',
       dataIndex: 'age',
-      width: '15%',
     },
     {
       title: '性别',
@@ -63,6 +67,12 @@ export default () => {
       key: 'post_id',
       dataIndex: 'post_id',
       valueType: 'select',
+      render: (text: any, record: any) => (
+        <Tag color={colors[record.post_id]}>
+          {post_arr[text]}
+          {text}
+        </Tag>
+      ),
       request: async () => postArray,
     },
 
@@ -85,7 +95,6 @@ export default () => {
     {
       title: '操作',
       valueType: 'option',
-      width: 200,
       render: (text, record, _, action) => [
         <a
           key="editable"
@@ -119,7 +128,10 @@ export default () => {
             scroll={{
               x: 960,
             }}
-            recordCreatorProps={false}
+            recordCreatorProps={{
+              position: 'top',
+              record: () => ({ player_id: (Math.random() * 1000000).toFixed(0) }),
+            }}
             loading={false}
             columns={columns}
             request={async () => ({
@@ -139,8 +151,6 @@ export default () => {
                 await updatePlayers(data);
 
                 run();
-                // 更新表哥
-                // await waitTime(2000);
               },
               onChange: setEditableRowKeys,
             }}

@@ -28,6 +28,12 @@ const columns = [
       )),
   },
   {
+    title: '报名队伍',
+    dataIndex: 'teams',
+    key: 'teams',
+    render: (data: any) => <span>{data?.team_name}</span>,
+  },
+  {
     title: '审核状态',
     dataIndex: 'status',
     key: 'status',
@@ -36,12 +42,13 @@ const columns = [
 
   {
     title: '操作',
-    dataIndex: 'remark',
-    key: 'remark',
-    render: (a: any, record: any) => {
+    dataIndex: 'status',
+    key: 'status',
+    render: (status: any, record: any) => {
       const query = {
         sign_up_id: record.sign_up_id,
         item_relation: JSON.stringify(record.item_relation),
+        reason: record.reason,
       };
       return (
         <Space>
@@ -50,12 +57,31 @@ const columns = [
             onClick={() => {
               history.push({
                 pathname: '/comSign/review/detail',
-                query,
+                query: {
+                  ...query,
+                  detail: '1',
+                },
               });
             }}
           >
             详情
           </Button>
+          {status === 2 && (
+            <Button
+              type="primary"
+              onClick={() => {
+                history.push({
+                  pathname: '/comSign/review/detail',
+                  query: {
+                    ...query,
+                    detail: '1',
+                  },
+                });
+              }}
+            >
+              修改
+            </Button>
+          )}
         </Space>
       );
     },
@@ -65,14 +91,12 @@ const columns = [
 function Index() {
   const { data = [] } = useRequest(getSignUp);
   return (
-    <PageContainer>
-      <Table
-        dataSource={data}
-        columns={columns}
-        pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
-        bordered
-      />
-    </PageContainer>
+    <Table
+      dataSource={data}
+      columns={columns}
+      pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
+      bordered
+    />
   );
 }
 

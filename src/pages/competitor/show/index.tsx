@@ -1,30 +1,10 @@
 // 编排演示页面
 import React, { useState } from 'react';
-import {
-  Button,
-  Card,
-  List,
-  Table,
-  Tag,
-  Avatar,
-  Input,
-  Radio,
-  Form,
-  Select,
-  Typography,
-} from 'antd';
+import { Button, Card, Table, Tag, Input, Radio, Form, Select, Typography } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 
 import VerticalSpace from '@/components/VerticalSpace';
-import generateSnakeGroup, { getRouteMap } from './matchAi';
-
-const matchColor = (key: number) => {
-  const map = new Map();
-  map.set(1, '#f50');
-  map.set(2, '#2db7f5');
-  map.set(3, '#87d068');
-  return map.get(key) ?? 'gray';
-};
+import generateSnakeGroup, { getRouteMap } from '../dispatch/matchAi';
 
 const getItemByRank = (rank: number | any, data: any[]) => {
   for (const item of data) {
@@ -37,7 +17,6 @@ const getItemByRank = (rank: number | any, data: any[]) => {
 
 const mapOriginData = (data: any[], pathCount: number, groupCount: number) => {
   const groups = generateSnakeGroup([1, 2, 3, 4, 5, 6, 7, 8], groupCount);
-  // getRouteMap()
   const newData = groups.map((items, index) => {
     return items.map((rank) => {
       return getItemByRank(rank, data);
@@ -62,25 +41,13 @@ const mapOriginData = (data: any[], pathCount: number, groupCount: number) => {
     return group.map((item) => {
       return {
         ...item,
-        routeNo: getRouteMap(pathCount, item.groupInnerRank),
+        path: getRouteMap(pathCount, item.groupInnerRank),
       };
     });
   });
 
-  // 填充漏的赛道
-
-  for (let pathNo = 1; pathNo <= pathCount; pathNo++) {
-    stateThree.forEach((item) => {
-      const unOccupation = item.every((it) => it.routeNo !== pathNo);
-      // console.log(pathNo, unOccupation);
-      if (unOccupation) {
-        item.push({ routeNo: pathNo, teamName: '-' });
-      }
-    });
-  }
-
   stateThree.forEach((item) => {
-    item.sort((a: any, b: any) => a.routeNo - b.routeNo);
+    item.sort((a: any, b: any) => a.path - b.path);
   });
 
   console.log(stateThree);
@@ -88,95 +55,8 @@ const mapOriginData = (data: any[], pathCount: number, groupCount: number) => {
   return stateThree;
 };
 
-const columns = [
-  // {
-  //   title: '组次',
-  //   dataIndex: 'groupNumber',
-  //   key: 'groupNumber',
-  //   onCell: (_: any, index: any) => {
-  //     if (index % 4 === 0) {
-  //       return { rowSpan: 4 };
-  //     }
-
-  //     return { rowSpan: 0 };
-  //   },
-  // },
-  {
-    title: '赛道',
-    dataIndex: 'routeNo',
-    key: 'routeNo',
-    render: (initVal: any) => <Tag color="green">{initVal}</Tag>,
-  },
-  {
-    title: '队名',
-    dataIndex: 'teamName',
-    key: 'teamName',
-  },
-  {
-    title: '成绩',
-    dataIndex: 'score1',
-    key: 'score1',
-    render: () => <></>,
-  },
-  {
-    title: '名次',
-    dataIndex: 'no1',
-    key: 'no1',
-    render: () => <></>,
-  },
-];
-
 function Index() {
-  const data = [
-    {
-      teamName: '广州队',
-      score: 98,
-      no: 1,
-      img: 'http://cdn.shopify.com/s/files/1/0086/0795/7054/articles/Cat_s_Mind_x630.jpg?v=1624444348',
-    },
-    {
-      teamName: '武汉队',
-      score: 97,
-      no: 2,
-      img: 'http://cdn.shopify.com/s/files/1/0086/0795/7054/articles/Cat_s_Mind_x630.jpg?v=1624444348',
-    },
-    {
-      teamName: '湛江队',
-      score: 96,
-      no: 3,
-      img: 'http://cdn.shopify.com/s/files/1/0086/0795/7054/articles/Cat_s_Mind_x630.jpg?v=1624444348',
-    },
-    {
-      teamName: '江西队',
-      score: 95,
-      no: 4,
-      img: 'http://cdn.shopify.com/s/files/1/0086/0795/7054/articles/Cat_s_Mind_x630.jpg?v=1624444348',
-    },
-    {
-      teamName: '雷州队',
-      score: 94,
-      no: 5,
-      img: 'http://cdn.shopify.com/s/files/1/0086/0795/7054/articles/Cat_s_Mind_x630.jpg?v=1624444348',
-    },
-    {
-      teamName: '杭州队',
-      score: 93,
-      no: 6,
-      img: 'http://cdn.shopify.com/s/files/1/0086/0795/7054/articles/Cat_s_Mind_x630.jpg?v=1624444348',
-    },
-    {
-      teamName: '羊城队',
-      score: 92,
-      no: 7,
-      img: 'http://cdn.shopify.com/s/files/1/0086/0795/7054/articles/Cat_s_Mind_x630.jpg?v=1624444348',
-    },
-    {
-      teamName: '渔村队',
-      score: 91,
-      no: 8,
-      img: 'http://cdn.shopify.com/s/files/1/0086/0795/7054/articles/Cat_s_Mind_x630.jpg?v=1624444348',
-    },
-  ];
+  const data: any = [];
 
   const [gData, setGData] = useState<undefined | Array<[]>>();
 
@@ -223,39 +103,7 @@ function Index() {
           </Form.Item>
         </Form>
 
-        <VerticalSpace>
-          {gData &&
-            (gData as any).map((data: any[], index: any) => (
-              <>
-                <Typography.Title>
-                  {form.getFieldsValue().title} 第 {index + 1} 组
-                </Typography.Title>
-                <Table
-                  dataSource={data}
-                  columns={columns}
-                  pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
-                  bordered
-                />
-              </>
-            ))}
-
-          <List
-            itemLayout="horizontal"
-            dataSource={data}
-            renderItem={(item) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={<Avatar src={item.img} />}
-                  title={<a href="https://ant.design">{item.teamName}</a>}
-                  description={'得分:' + item.score}
-                />
-                <div>
-                  <Tag color={matchColor(item.no)}>NO.{item.no}</Tag>
-                </div>
-              </List.Item>
-            )}
-          />
-        </VerticalSpace>
+        <VerticalSpace></VerticalSpace>
       </Card>
     </PageContainer>
   );

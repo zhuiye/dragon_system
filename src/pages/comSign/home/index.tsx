@@ -111,7 +111,9 @@ function Index() {
                     ]}
                   >
                     <List.Item.Meta
-                      avatar={<Avatar />}
+                      avatar={
+                        <Avatar src="https://static.fotor.com.cn/assets/stickers/ba121170-c28d-4485-a879-beae52bdb0d3_thumb.png" />
+                      }
                       title={<a href="https://ant.design">{item.team_name}</a>}
                       description={item.desc}
                     />

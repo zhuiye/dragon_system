@@ -109,7 +109,7 @@ export default defineConfig({
     // },
     {
       path: '/review',
-      name: '审核管理',
+      name: '报名审核',
       icon: 'dashboard',
       routes: [
         {
@@ -120,6 +120,11 @@ export default defineConfig({
         {
           path: '/review/home/detail',
           component: './review/detail',
+        },
+        {
+          name: '统计',
+          path: '/review/statistic',
+          component: './review/statistic',
         },
       ],
     },
@@ -147,7 +152,7 @@ export default defineConfig({
         // },
         {
           path: '/comSign/review/detail',
-          component: './comSign/review/reviewDetail',
+          component: './comSign/review/detail',
         },
         // {
         //   name: '详情页',
