@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Space, Table, Tag } from 'antd';
+import { Button, Card, List, Modal, Space, Table, Tag, Typography, Form, Input, Radio } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'ahooks';
 import { getCompetitionsDispatch } from '@/services/ant-design-pro/competition';
@@ -38,7 +38,7 @@ const columns = [
           type="primary"
           onClick={() => {
             history.push({
-              pathname: '/score/home/input',
+              pathname: '/score/foul/input',
               query: {
                 item_key: record.item_key,
                 competition_id: record.competition_id,
@@ -46,12 +46,12 @@ const columns = [
             });
           }}
         >
-          录入成绩
+          记录
         </Button>
         <Button
           onClick={() => {
             history.push({
-              pathname: '/score/home/detail',
+              pathname: '/score/foul/detail',
               query: {
                 item_key: record.item_key,
                 competition_id: record.competition_id,

@@ -86,29 +86,134 @@ const getRouteMap = (pathCount: number, groupRank: number) => {
   // if()
 };
 
-function randomAssign(data: any[], m: number, n: number, race_track_number: number) {
-  // 随机打乱队伍的顺序
-  const shuffledData = data.sort(() => Math.random() - 0.5);
-  const result = [];
-  let assignedCount = 0;
-  for (let i = 0; i < n; i++) {
-    const assignedData = shuffledData.slice(assignedCount, assignedCount + m);
-    if (assignedData.length < m) {
-      break;
-    }
-    assignedCount += assignedData.length;
-    const group = {
-      group_number: i,
-      data: assignedData.map((item) => ({
-        team_name: item.team_name,
-        team_id: item.team_id,
-        path: Math.floor(Math.random() * race_track_number) + 1,
-      })),
-    };
-    result.push(group);
+function randomAssign(data: any, group_count: any, len: any, race_track_number: any) {
+  // 首先将 data 按照随机顺序排序
+  const shuffledData = shuffle(data);
+
+  // 计算每组最少需要的队伍数
+  const minTeamCount = Math.floor(shuffledData.length / group_count);
+
+  // 如果最少需要的队伍数小于 len，则将 len 设置为 minTeamCount
+  if (minTeamCount < len) {
+    len = minTeamCount;
   }
-  return result;
+
+  // 将队伍分成 group_count 组
+  const groups = [];
+  for (let i = 0; i < group_count; i++) {
+    groups.push({
+      group_number: i,
+      data: [],
+    });
+  }
+
+  // 依次将队伍添加到组中
+  for (let i = 0; i < shuffledData.length; i++) {
+    const team = shuffledData[i];
+    let added = false;
+    for (let j = 0; j < groups.length; j++) {
+      const group = groups[j];
+      // 如果该组还没有达到最少需要的队伍数，则将该队伍添加到该组
+      if (group.data.length < len) {
+        group.data.push(assignPath(team, group.data, race_track_number));
+        added = true;
+        break;
+      }
+    }
+    // 如果没有找到可以添加的组，则将该队伍添加到随机的一组中
+    if (!added) {
+      const randomIndex = Math.floor(Math.random() * groups.length);
+      groups[randomIndex].data.push(assignPath(team, groups[randomIndex].data, race_track_number));
+    }
+  }
+
+  return groups;
 }
 
-export { getRouteMap, randomAssign };
+// 用于将数组随机排序的函数
+function shuffle(array: string | any[]) {
+  let currentIndex = array.length;
+  let temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+// 用于为队伍分配 path 的函数
+function assignPath(team: any, data: any, race_track_number: any): any {
+  const usedPaths = data.map((item: { path: any }) => item.path);
+  let path;
+  do {
+    path = Math.floor(Math.random() * race_track_number) + 1;
+  } while (usedPaths.includes(path));
+  return {
+    team_name: team.team_name,
+    team_id: team.team_id,
+    path: path,
+  };
+}
+
+/**处理分道 */
+const getItemByRank = (rank: number | any, data: any[]) => {
+  for (const item of data) {
+    if (item.no === rank) {
+      return item;
+    }
+  }
+  return [];
+};
+
+const assignMapWithPath = (data: any[], pathCount: number, groupCount: number) => {
+  const count = pathCount * groupCount;
+  const model = [];
+  for (let i = 1; i <= count; i++) {
+    model.push(i);
+  }
+  const groups = generateSnakeGroup(model, groupCount);
+  const newData = groups.map((items, index) => {
+    return items.map((rank) => {
+      return getItemByRank(rank, data);
+    });
+  });
+  // 组内排名
+
+  const mapGroupInnerRank = newData.map((group) => {
+    return group
+      .sort((a, b) => a.score - b.score)
+      .map((item, index) => {
+        return {
+          groupInnerRank: index + 1,
+          ...item,
+        };
+      });
+  });
+
+  const mapWithPath = mapGroupInnerRank.map((group) => {
+    return group.map((item) => {
+      return {
+        ...item,
+        path: getRouteMap(pathCount, item.groupInnerRank),
+      };
+    });
+  });
+
+  mapWithPath.forEach((item) => {
+    item.sort((a: any, b: any) => a.path - b.path);
+  });
+
+  return mapWithPath;
+};
+
+export { getRouteMap, randomAssign, assignMapWithPath };
 export default generateSnakeGroup;

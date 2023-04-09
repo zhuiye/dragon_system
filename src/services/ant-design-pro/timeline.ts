@@ -23,6 +23,13 @@ export async function generateTimeLine(description: { [key: string]: any }) {
   });
 }
 
+export async function assignTeamMapWithRout(description: { [key: string]: any }) {
+  return request('/dragon-api/timeline/update', {
+    method: 'Patch',
+    data: description,
+  });
+}
+
 export async function generateTimeLineSort(options?: { [key: string]: any }) {
   return request<any[]>('/dragon-api/timeline/sort', {
     method: 'GET',

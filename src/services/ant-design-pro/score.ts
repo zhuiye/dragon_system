@@ -8,6 +8,13 @@ export async function getScore(options?: { [key: string]: any }) {
   }).then((res: any) => res.data);
 }
 
+export async function getPreScore(options?: { [key: string]: any }) {
+  return request<any[]>('/dragon-api/score/semifinal', {
+    method: 'GET',
+    params: options ?? {},
+  }).then((res: any) => res.data);
+}
+
 export async function addScore(description: { [key: string]: any }) {
   return request('/dragon-api/score', {
     method: 'POST',

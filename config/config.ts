@@ -86,27 +86,27 @@ export default defineConfig({
         },
       ],
     },
-    // {
-    //   path: '/check',
-    //   name: '比赛检录',
-    //   icon: 'dashboard',
-    //   routes: [
-    //     {
-    //       path: '/check',
-    //       redirect: '/check/list',
-    //     },
-    //     {
-    //       name: '管理页',
-    //       path: '/check/list',
-    //       component: './check/list',
-    //     },
-    //     {
-    //       name: '详情页',
-    //       path: '/check/detail',
-    //       component: './check/detail',
-    //     },
-    //   ],
-    // },
+    {
+      path: '/check',
+      name: '比赛检录',
+      icon: 'dashboard',
+      routes: [
+        {
+          path: '/check',
+          redirect: '/check/list',
+        },
+        {
+          name: '管理页',
+          path: '/check/list',
+          component: './check/list',
+        },
+        {
+          name: '详情页',
+          path: '/check/detail',
+          component: './check/detail',
+        },
+      ],
+    },
     {
       path: '/review',
       name: '报名审核',
@@ -167,10 +167,24 @@ export default defineConfig({
       icon: 'dashboard',
       routes: [
         {
-          name: '首页',
+          name: '成绩录入',
           path: '/score/home',
           component: './score/home',
         },
+        {
+          name: '犯规记录',
+          path: '/score/foul',
+          component: './score/foul',
+        },
+        {
+          path: '/score/foul/input',
+          component: './score/foul/input',
+        },
+        {
+          path: '/score/foul/detail',
+          component: './score/foul/detail',
+        },
+
         {
           path: '/score/home/detail',
           component: './score/detail',
@@ -230,7 +244,7 @@ export default defineConfig({
           component: './competitor/create',
         },
         {
-          name: '赛道编排页面',
+          name: '赛道编排',
           path: '/competitor/dispatch',
           component: './competitor/dispatch',
         },
@@ -238,17 +252,6 @@ export default defineConfig({
           path: '/competitor/dispatch/detail',
           component: './competitor/dispatch/detail',
         },
-        {
-          name: '赛道编排',
-          path: '/competitor/show',
-          component: './competitor/show',
-        },
-
-        // {
-        //   name: '详情页',
-        //   path: '/check/detail',
-        //   component: './check/detail',
-        // },
       ],
     },
     // {

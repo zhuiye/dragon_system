@@ -4,23 +4,25 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'ahooks';
 import { getSignUpCount } from '@/services/ant-design-pro/sign';
 import { getDSetting } from '@/services/ant-design-pro/d_settings';
-import { useLocation } from 'umi';
 import { generateTimeLine, getTimeline } from '@/services/ant-design-pro/timeline';
+import { useQuery } from '@/components/hooks/useQuery';
+
+const colors = ['green', 'gold', 'purple', 'yellow', 'red', 'orange'];
 
 const columns = [
   {
     title: '比赛项目',
-    dataIndex: 'content_name',
-    key: 'content_name',
+    dataIndex: 'item_sort_link',
+    key: 'item_sort_link',
     render: (item: any) => {
-      return <Tag color="green">{`${item} `}</Tag>;
+      return <Tag color="green">{`${item.item_name} ${item.sort_name} `}</Tag>;
     },
   },
   {
     title: '轮次类型',
     dataIndex: 'round_type',
     key: 'round_type',
-    render: (text: any) => <Tag color="red">{getRoundMap(parseInt(text))}</Tag>,
+    render: (text: any) => <Tag color={colors[parseInt(text)]}>{getRoundMap(parseInt(text))}</Tag>,
   },
   {
     title: '组别',
@@ -90,7 +92,7 @@ function generateCompetitionData(data: any, res: any) {
         competition_id: res.competition_id,
         round_type: index,
         group_number: groupId,
-        time: 0,
+        time: null,
         race_track_number: res.race_track_number,
         item_sort_link: JSON.stringify(getItemSortLink(res.currentKey, res.msgList)),
       });
@@ -101,14 +103,16 @@ function generateCompetitionData(data: any, res: any) {
 }
 
 function Index() {
-  const location: any = useLocation();
+  const query = useQuery();
 
   const { data: msgList = [] } = useRequest(() =>
-    getSignUpCount({ competition_id: location.query.competition_id }),
+    getSignUpCount({ competition_id: query.competition_id }),
   );
-  const { data = [], run } = useRequest(() =>
-    getTimeline({ competition_id: location.query.competition_id }),
-  );
+  const {
+    data = [],
+    run,
+    refresh,
+  } = useRequest(() => getTimeline({ competition_id: query.competition_id }));
 
   const [form] = Form.useForm();
 
@@ -122,7 +126,7 @@ function Index() {
     const res = await getDSetting({ team_count, ...form.getFieldsValue() });
 
     const timeData = generateCompetitionData(res, {
-      ...location.query,
+      ...query,
       ...form.getFieldsValue(),
       currentKey: current,
       msgList,
@@ -172,6 +176,8 @@ function Index() {
                 }
               />
               <Button
+                disabled={data.length > 0}
+                type="primary"
                 onClick={() => {
                   setCurrentKey(item.key);
                   setVisible(true);

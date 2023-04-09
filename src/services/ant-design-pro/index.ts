@@ -7,8 +7,8 @@ import * as login from './login';
 import * as competition from './competition';
 import * as team from './team';
 import * as player from './player';
-
 import * as timeline from './timeline';
+import * as foul from './foul';
 
 export default {
   api,
@@ -17,4 +17,5 @@ export default {
   team,
   player,
   timeline,
+  foul,
 };
