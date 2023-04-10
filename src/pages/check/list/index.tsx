@@ -1,61 +1,66 @@
-import React from 'react';
-import { Table } from 'antd';
+import React, { useState } from 'react';
+import { Button, Card, List, Modal, Space, Table, Tag, Typography, Form, Input, Radio } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
-
-const dataSource = [
-  {
-    gNo: '1',
-    name: '龙舟1',
-    enterNumber: 32,
-    start: '9:00',
-    end: '结束时间',
-    checkStatus: '未检录',
-  },
-];
+import { useRequest } from 'ahooks';
+import { getCompetitions, getCompetitionsDispatch } from '@/services/ant-design-pro/competition';
+import { history } from 'umi';
 
 const columns = [
   {
-    title: '队伍编号',
-    dataIndex: 'gNo',
-    key: 'gNo',
-  },
-  {
-    title: '参赛队伍名称',
+    title: '赛事名',
     dataIndex: 'name',
     key: 'name',
+    onCell: (_: any, index: any) => {
+      if (index % _.rowSpan === 0) {
+        return { rowSpan: _.rowSpan };
+      }
+
+      return { rowSpan: 0 };
+    },
   },
   {
-    title: '参赛队伍人数',
-    dataIndex: 'enterNumber',
-    key: 'enterNumber',
-  },
-  {
-    title: '检录时间',
-    dataIndex: 'start',
-    key: 'start',
-  },
-  {
-    title: '检录结束时间',
-    dataIndex: 'end',
-    key: 'end',
-  },
-  {
-    title: '检录状态',
-    dataIndex: 'checkStatus',
-    key: 'checkStatus',
+    title: '内容',
+    dataIndex: 'item_sort_link',
+    key: 'item_sort_link',
+    render: (data: any, record: any) => (
+      <Tag color="green">
+        {data.item_name} {data.sort_name}
+      </Tag>
+    ),
   },
   {
     title: '操作',
-    dataIndex: 'checkStatus',
-    key: 'checkStatus',
-    render: (text: any) => <a>检录xxx</a>,
+    dataIndex: 'a',
+    key: 'a',
+    render: (a: any, record: any) => (
+      <Button
+        type="primary"
+        onClick={() => {
+          history.push({
+            pathname: '/check/list/detail',
+            query: {
+              item_key: record.item_key,
+              competition_id: record.id,
+            },
+          });
+        }}
+      >
+        检录
+      </Button>
+    ),
   },
 ];
 
 function Index() {
+  const { data = [] } = useRequest(getCompetitionsDispatch);
   return (
-    <PageContainer title="运动员比赛检录" content={<div>声明减员功能，删除哪位成员，哪位</div>}>
-      <Table dataSource={dataSource} columns={columns} />;
+    <PageContainer>
+      <Table
+        dataSource={data}
+        columns={columns}
+        pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
+        bordered
+      />
     </PageContainer>
   );
 }

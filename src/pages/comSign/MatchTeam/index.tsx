@@ -31,7 +31,7 @@ const getOwnBinds = (key: any, data: any) => {
   return [];
 };
 
-const show = (binds: [], player: any[]) => {
+const show = (binds: any[], player: any[]) => {
   const playerFilter = player.filter((item: any) => binds.includes((item as any).player_id));
   return playerFilter;
 };
@@ -40,9 +40,6 @@ const MatchTeam: React.FC = () => {
   const [currentKey, setCurrentKey] = useState('');
 
   const query = useQuery();
-
-  // const
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const item_sort_link = JSON.parse(query.item_sort_link);
   const [links, setLink] = useState(generateLink(item_sort_link));
@@ -79,6 +76,9 @@ const MatchTeam: React.FC = () => {
   ];
 
   const { data = [] } = useRequest(() => getPlayers({ team_id: query.team_id }));
+
+  // const
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);

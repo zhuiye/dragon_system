@@ -9,6 +9,7 @@ import * as team from './team';
 import * as player from './player';
 import * as timeline from './timeline';
 import * as foul from './foul';
+import * as check from './check';
 
 export default {
   api,
@@ -18,4 +19,5 @@ export default {
   player,
   timeline,
   foul,
+  check,
 };

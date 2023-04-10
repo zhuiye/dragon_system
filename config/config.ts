@@ -96,14 +96,25 @@ export default defineConfig({
           redirect: '/check/list',
         },
         {
-          name: '管理页',
+          name: '检录',
           path: '/check/list',
           component: './check/list',
         },
         {
-          name: '详情页',
-          path: '/check/detail',
+          path: '/check/list/detail',
           component: './check/detail',
+        },
+        {
+          path: '/check/user',
+          component: './check/user',
+        },
+        {
+          path: '/check/user/detail',
+          component: './check/user/detail',
+        },
+        {
+          path: '/check/user/show',
+          component: './check/user/show',
         },
       ],
     },
@@ -118,13 +129,12 @@ export default defineConfig({
           component: './review/home',
         },
         {
-          path: '/review/home/detail',
-          component: './review/detail',
+          path: '/review/home/list',
+          component: './review/list',
         },
         {
-          name: '统计',
-          path: '/review/statistic',
-          component: './review/statistic',
+          path: '/review/home/detail',
+          component: './review/detail',
         },
       ],
     },
@@ -251,6 +261,18 @@ export default defineConfig({
         {
           path: '/competitor/dispatch/detail',
           component: './competitor/dispatch/detail',
+        },
+      ],
+    },
+    {
+      path: '/role',
+      name: '权限管理',
+      icon: 'dashboard',
+      routes: [
+        {
+          name: '用户列表',
+          path: '/role/home',
+          component: './role/home',
         },
       ],
     },

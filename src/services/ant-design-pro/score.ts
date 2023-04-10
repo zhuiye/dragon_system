@@ -8,8 +8,23 @@ export async function getScore(options?: { [key: string]: any }) {
   }).then((res: any) => res.data);
 }
 
+/** 此处后端没有提供注释 GET /api/competition */
+export async function getScoreGroup(options?: { [key: string]: any }) {
+  return request<any[]>('/dragon-api/score/group', {
+    method: 'GET',
+    params: options ?? {},
+  }).then((res: any) => res.data);
+}
+
 export async function getPreScore(options?: { [key: string]: any }) {
   return request<any[]>('/dragon-api/score/semifinal', {
+    method: 'GET',
+    params: options ?? {},
+  }).then((res: any) => res.data);
+}
+
+export async function getSemiFinalScore(options?: { [key: string]: any }) {
+  return request<any[]>('/dragon-api/score/final', {
     method: 'GET',
     params: options ?? {},
   }).then((res: any) => res.data);

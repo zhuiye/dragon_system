@@ -32,21 +32,24 @@ const columns = [
     title: '操作',
     dataIndex: 'a',
     key: 'a',
-    render: (a: any, record: any) => (
-      <Button
-        type="primary"
-        onClick={() => {
-          history.push({
-            pathname: '/competitor/dispatch/detail',
-            query: {
-              item_key: record.item_key,
-            },
-          });
-        }}
-      >
-        编排
-      </Button>
-    ),
+    render: (a: any, record: any) => {
+      return (
+        <Button
+          type="primary"
+          onClick={() => {
+            history.push({
+              pathname: '/competitor/dispatch/detail',
+              query: {
+                item_key: record.item_key,
+                competition_id: record.id,
+              },
+            });
+          }}
+        >
+          编排
+        </Button>
+      );
+    },
   },
 ];
 

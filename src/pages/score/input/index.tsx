@@ -56,6 +56,7 @@ const App: React.FC = () => {
       content_name: data.content_name,
       team_id,
       qualifications,
+      item_key: query.item_key,
       score: parseInt(score),
     });
     message.success('录入成功');

@@ -4,6 +4,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'ahooks';
 import { history } from 'umi';
 import { getSignUp } from '@/services/ant-design-pro/sign';
+import { useQuery } from '@/components/hooks/useQuery';
 
 const statusArr = ['未审核', '已通过', '未通过'];
 const statusColor = ['gray', 'green', 'red'];
@@ -88,7 +89,8 @@ const columns = [
 ];
 
 function Index() {
-  const { data = [] } = useRequest(getSignUp);
+  const query = useQuery();
+  const { data = [] } = useRequest(() => getSignUp(query));
   return (
     <PageContainer>
       <Card>

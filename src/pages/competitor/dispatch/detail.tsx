@@ -6,7 +6,7 @@ import { assignTeamMapWithRout, generateTimeLineAssign } from '@/services/ant-de
 import { useQuery } from '@/components/hooks/useQuery';
 import { assignMapWithPath, randomAssign } from './matchAi';
 import { getSignUpTeams } from '@/services/ant-design-pro/sign';
-import { getPreScore } from '@/services/ant-design-pro/score';
+import { getPreScore, getSemiFinalScore } from '@/services/ant-design-pro/score';
 const columns: any = [
   {
     title: '时间',
@@ -57,17 +57,26 @@ function Index() {
 
   const { data = [], refresh: reloadTimelineList } = useRequest(() =>
     generateTimeLineAssign({
+      competition_id: query.competition_id,
       item_key: query.item_key,
     }),
   );
 
   const { data: preScores = [] } = useRequest(() =>
     getPreScore({
-      competition_id: 9,
+      competition_id: query.competition_id,
       rule_id: '300',
     }),
   );
 
+  const { data: finalScores = [] } = useRequest(() =>
+    getSemiFinalScore({
+      competition_id: query.competition_id,
+      rule_id: '600',
+    }),
+  );
+
+  // 初赛
   const assignPreliminaries = async (timeLineItem: any) => {
     const data = randomAssign(
       teamList,
@@ -86,16 +95,14 @@ function Index() {
         assign_list: JSON.stringify(item.data),
       };
     });
-    // console.log(updateRecord);
 
     await assignTeamMapWithRout({ data: updateRecord });
     message.success('编排成功');
   };
 
-  const assignSemifinal = async (timeLineItem: any) => {
-    const data = assignMapWithPath(preScores, 4, 1);
+  const handlerProcess = async (timeLineItem: any, score: any) => {
+    const data = assignMapWithPath(score, timeLineItem.race_track_number, timeLineItem.group_count);
 
-    // group_number
     const res = data.map((item, index) => {
       return {
         group_number: index,
@@ -118,8 +125,17 @@ function Index() {
     });
     await assignTeamMapWithRout({ data: updateRecord });
     message.success('编排成功');
-    // 开始进行蛇形分道。
   };
+
+  // 半决赛
+  const assignSemifinal = async (timeLineItem: any) => {
+    handlerProcess(timeLineItem, preScores);
+  };
+  //决赛
+  const assignFinal = async (timeLineItem: any) => {
+    handlerProcess(timeLineItem, finalScores);
+  };
+
   const assign = (item: any) => {
     switch (item.round_type) {
       case 0:
@@ -133,11 +149,15 @@ function Index() {
 
         break;
 
-      case 3:
+      case 5:
+        assignFinal(item);
         break;
     }
+
     reloadTimelineList();
   };
+
+  console.log(data);
 
   return (
     <PageContainer title="整体赛事时间安排" content={<div>此页面用于每轮比赛的赛道分配编排</div>}>
@@ -157,6 +177,7 @@ function Index() {
           </div>
 
           <Table
+            key="key"
             dataSource={item.data}
             columns={columns}
             pagination={{ hideOnSinglePage: true, pageSize: 100000 }}

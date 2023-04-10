@@ -12,8 +12,6 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
-/* eslint-enable no-template-curly-in-string */
-
 const App: React.FC = () => {
   const [form] = Form.useForm();
 
@@ -64,6 +62,9 @@ const App: React.FC = () => {
     <PageContainer title="犯规录入">
       <Card>
         <Form {...layout} form={form}>
+          <Form.Item name="creator">
+            <Input placeholder="请输入裁判员名字" />
+          </Form.Item>
           <Form.Item name="timeline_id">
             <Select options={itemMap} placeholder="请选择比赛内容" />
           </Form.Item>
@@ -106,6 +107,12 @@ const App: React.FC = () => {
             <Radio.Group>
               <Radio value={0}>黄牌</Radio>
               <Radio value={1}>红牌</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item name="qualifications">
+            <Radio.Group defaultValue={1}>
+              <Radio value={0}>取消资格</Radio>
+              <Radio value={1}>保留资格</Radio>
             </Radio.Group>
           </Form.Item>
 

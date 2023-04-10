@@ -30,6 +30,11 @@ const columns = [
     render: (text: any) => <Tag color={colors[text]}>{brand[text]}</Tag>,
   },
   {
+    title: '裁判员',
+    dataIndex: 'creator',
+    key: 'creator',
+  },
+  {
     title: '违规备注',
     dataIndex: 'desc',
     key: 'desc',
