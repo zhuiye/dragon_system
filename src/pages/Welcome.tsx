@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Alert, Typography } from 'antd';
 import { useIntl, FormattedMessage } from 'umi';
 import styles from './Welcome.less';
-
+import Typed from 'typed.js';
 const CodePreview: React.FC = ({ children }) => (
   <pre className={styles.pre}>
     <code>
@@ -12,54 +12,37 @@ const CodePreview: React.FC = ({ children }) => (
   </pre>
 );
 
-const Welcome: React.FC = () => {
-  const intl = useIntl();
+function TypeComponent() {
+  // Create reference to store the DOM element containing the animation
+  const el = React.useRef(null);
+
+  React.useEffect(() => {
+    const typed = new Typed(el.current, {
+      showCursor: false,
+      strings: ['欢迎来到龙舟赛事系统!'],
+      typeSpeed: 50,
+    });
+
+    return () => {
+      // Destroy Typed instance during cleanup to stop animation
+      typed.destroy();
+    };
+  }, []);
 
   return (
-    <PageContainer>
-      <Card>
-        <Alert
-          message={intl.formatMessage({
-            id: 'pages.welcome.alertMessage',
-            defaultMessage: 'Faster and stronger heavy-duty components have been released.',
-          })}
-          type="success"
-          showIcon
-          banner
-          style={{
-            margin: -12,
-            marginBottom: 24,
-          }}
-        />
-        <Typography.Text strong>
-          <FormattedMessage id="pages.welcome.advancedComponent" defaultMessage="Advanced Form" />{' '}
-          <a
-            href="https://procomponents.ant.design/components/table"
-            rel="noopener noreferrer"
-            target="__blank"
-          >
-            <FormattedMessage id="pages.welcome.link" defaultMessage="Welcome" />
-          </a>
-        </Typography.Text>
-        <CodePreview>yarn add @ant-design/pro-table</CodePreview>
-        <Typography.Text
-          strong
-          style={{
-            marginBottom: 12,
-          }}
-        >
-          <FormattedMessage id="pages.welcome.advancedLayout" defaultMessage="Advanced layout" />{' '}
-          <a
-            href="https://procomponents.ant.design/components/layout"
-            rel="noopener noreferrer"
-            target="__blank"
-          >
-            <FormattedMessage id="pages.welcome.link" defaultMessage="Welcome" />
-          </a>
-        </Typography.Text>
-        <CodePreview>yarn add @ant-design/pro-layout</CodePreview>
-      </Card>
-    </PageContainer>
+    <Typography.Title className="App">
+      <span ref={el} />
+    </Typography.Title>
+  );
+}
+
+const Welcome: React.FC = () => {
+  return (
+    <Card>
+      <div>
+        <TypeComponent />
+      </div>
+    </Card>
   );
 };
 

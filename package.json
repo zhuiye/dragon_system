@@ -80,6 +80,7 @@
     "react-fittext": "^1.0.0",
     "react-helmet-async": "^1.2.0",
     "react-router": "^4.3.1",
+    "typed.js": "^2.0.15",
     "umi": "^3.5.0",
     "umi-serve": "^1.9.10",
     "xlsx": "^0.18.5"

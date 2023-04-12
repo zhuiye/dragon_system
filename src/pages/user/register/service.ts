@@ -6,16 +6,13 @@ export interface StateType {
 }
 
 export interface UserRegisterParams {
-  mail: string;
+  account: string;
   password: string;
-  confirm: string;
-  mobile: string;
-  captcha: string;
-  prefix: string;
+  role_id: string;
 }
 
-export async function fakeRegister(params: UserRegisterParams) {
-  return request('/api/register', {
+export async function register(params: UserRegisterParams) {
+  return request('/dragon-api/user', {
     method: 'POST',
     data: params,
   });

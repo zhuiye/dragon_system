@@ -136,31 +136,28 @@ function Index() {
     handlerProcess(timeLineItem, finalScores);
   };
 
-  const assign = (item: any) => {
+  const assign = async (item: any) => {
     switch (item.round_type) {
       case 0:
-        assignPreliminaries(item);
+        await assignPreliminaries(item);
         break;
       case 1:
         break;
 
       case 2:
-        assignSemifinal(item);
+        await assignSemifinal(item);
 
         break;
 
       case 5:
-        assignFinal(item);
+        await assignFinal(item);
         break;
     }
-
     reloadTimelineList();
   };
 
-  console.log(data);
-
   return (
-    <PageContainer title="整体赛事时间安排" content={<div>此页面用于每轮比赛的赛道分配编排</div>}>
+    <PageContainer title="赛道编排">
       {data.map((item: any, index: any) => (
         <Card key={index}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -177,7 +174,6 @@ function Index() {
           </div>
 
           <Table
-            key="key"
             dataSource={item.data}
             columns={columns}
             pagination={{ hideOnSinglePage: true, pageSize: 100000 }}

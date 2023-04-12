@@ -45,21 +45,21 @@ export default defineConfig({
           component: './user/Login',
         },
         {
+          layout: false,
+          name: 'register',
+          path: '/user/register',
+          component: './user/register',
+        },
+        {
           path: '/user',
           redirect: '/user/login',
         },
         {
           name: 'register-result',
-          icon: 'smile',
           path: '/user/register-result',
           component: './user/register-result',
         },
-        {
-          name: 'register',
-          icon: 'smile',
-          path: '/user/register',
-          component: './user/register',
-        },
+
         {
           component: '404',
         },
@@ -69,6 +69,7 @@ export default defineConfig({
       path: '/competition',
       name: '赛事管理',
       icon: 'dashboard',
+      access: 'normalRouteFilter',
       routes: [
         {
           path: '/competition',
@@ -90,6 +91,8 @@ export default defineConfig({
       path: '/check',
       name: '比赛检录',
       icon: 'dashboard',
+      access: 'normalRouteFilter',
+
       routes: [
         {
           path: '/check',
@@ -122,6 +125,7 @@ export default defineConfig({
       path: '/review',
       name: '报名审核',
       icon: 'dashboard',
+      access: 'normalRouteFilter',
       routes: [
         {
           name: '审核',
@@ -142,6 +146,7 @@ export default defineConfig({
       path: '/comSign',
       name: '报名',
       icon: 'dashboard',
+      access: 'normalRouteFilter',
       routes: [
         {
           name: '我的队伍',
@@ -175,6 +180,8 @@ export default defineConfig({
       path: '/score',
       name: '竞赛成绩管理',
       icon: 'dashboard',
+      access: 'normalRouteFilter',
+
       routes: [
         {
           name: '成绩录入',
@@ -205,27 +212,13 @@ export default defineConfig({
         },
       ],
     },
-    // {
-    //   path: '/assign',
-    //   name: '赛道分配',
-    //   icon: 'dashboard',
-    //   routes: [
-    //     {
-    //       name: '分配界面',
-    //       path: '/assign/detail',
-    //       component: './assign/detail',
-    //     },
-    //     // {
-    //     //   name: '详情页',
-    //     //   path: '/check/detail',
-    //     //   component: './check/detail',
-    //     // },
-    //   ],
-    // },
+
     {
       path: '/competitor',
       name: '编排管理',
       icon: 'dashboard',
+      access: 'normalRouteFilter',
+
       routes: [
         {
           name: '赛制设置',
@@ -265,156 +258,27 @@ export default defineConfig({
       ],
     },
     {
-      path: '/role',
-      name: '权限管理',
-      icon: 'dashboard',
+      path: '/',
       routes: [
         {
-          name: '用户列表',
-          path: '/role/home',
-          component: './role/home',
+          path: '/',
+          component: './Welcome',
         },
       ],
     },
     // {
-    //   path: '/dashboard',
-    //   name: 'dashboard',
+    //   path: '/role',
+    //   name: '权限管理',
     //   icon: 'dashboard',
     //   routes: [
     //     {
-    //       path: '/dashboard',
-    //       redirect: '/dashboard/analysis',
-    //     },
-    //     {
-    //       name: 'analysis',
-    //       icon: 'smile',
-    //       path: '/dashboard/analysis',
-    //       component: './dashboard/analysis',
-    //     },
-    //     {
-    //       name: 'monitor',
-    //       icon: 'smile',
-    //       path: '/dashboard/monitor',
-    //       component: './dashboard/monitor',
-    //     },
-    //     {
-    //       name: 'workplace',
-    //       icon: 'smile',
-    //       path: '/dashboard/workplace',
-    //       component: './dashboard/workplace',
+    //       name: '用户列表',
+    //       path: '/role/home',
+    //       component: './role/home',
     //     },
     //   ],
     // },
-    // {
-    //   path: '/form',
-    //   icon: 'form',
-    //   name: 'form',
-    //   routes: [
-    //     {
-    //       path: '/form',
-    //       redirect: '/form/basic-form',
-    //     },
-    //     {
-    //       name: 'basic-form',
-    //       icon: 'smile',
-    //       path: '/form/basic-form',
-    //       component: './form/basic-form',
-    //     },
-    //     {
-    //       name: 'step-form',
-    //       icon: 'smile',
-    //       path: '/form/step-form',
-    //       component: './form/step-form',
-    //     },
-    //     {
-    //       name: 'advanced-form',
-    //       icon: 'smile',
-    //       path: '/form/advanced-form',
-    //       component: './form/advanced-form',
-    //     },
-    //   ],
-    // },
-    // {
-    //   path: '/list',
-    //   icon: 'table',
-    //   name: 'list',
-    //   routes: [
-    //     {
-    //       path: '/list/search',
-    //       name: 'search-list',
-    //       component: './list/search',
-    //       routes: [
-    //         {
-    //           path: '/list/search',
-    //           redirect: '/list/search/articles',
-    //         },
-    //         {
-    //           name: 'articles',
-    //           icon: 'smile',
-    //           path: '/list/search/articles',
-    //           component: './list/search/articles',
-    //         },
-    //         {
-    //           name: 'projects',
-    //           icon: 'smile',
-    //           path: '/list/search/projects',
-    //           component: './list/search/projects',
-    //         },
-    //         {
-    //           name: 'applications',
-    //           icon: 'smile',
-    //           path: '/list/search/applications',
-    //           component: './list/search/applications',
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       path: '/list',
-    //       redirect: '/list/table-list',
-    //     },
-    //     {
-    //       name: 'table-list',
-    //       icon: 'smile',
-    //       path: '/list/table-list',
-    //       component: './list/table-list',
-    //     },
-    //     {
-    //       name: 'basic-list',
-    //       icon: 'smile',
-    //       path: '/list/basic-list',
-    //       component: './list/basic-list',
-    //     },
-    //     {
-    //       name: 'card-list',
-    //       icon: 'smile',
-    //       path: '/list/card-list',
-    //       component: './list/card-list',
-    //     },
-    //   ],
-    // },
-    // {
-    //   path: '/profile',
-    //   name: 'profile',
-    //   icon: 'profile',
-    //   routes: [
-    //     {
-    //       path: '/profile',
-    //       redirect: '/profile/basic',
-    //     },
-    //     {
-    //       name: 'basic',
-    //       icon: 'smile',
-    //       path: '/profile/basic',
-    //       component: './profile/basic',
-    //     },
-    //     {
-    //       name: 'advanced',
-    //       icon: 'smile',
-    //       path: '/profile/advanced',
-    //       component: './profile/advanced',
-    //     },
-    //   ],
-    // },
+
     // {
     //   name: 'result',
     //   icon: 'CheckCircleOutlined',
@@ -519,10 +383,10 @@ export default defineConfig({
     //     },
     //   ],
     // },
-    {
-      path: '/',
-      redirect: '/dashboard/analysis',
-    },
+    // {
+    //   path: '/',
+    //   redirect: '/dashboard/analysis',
+    // },
     {
       component: '404',
     },
