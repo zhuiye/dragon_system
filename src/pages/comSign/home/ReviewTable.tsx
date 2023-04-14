@@ -6,7 +6,7 @@ import { history } from 'umi';
 import { getSignUp } from '@/services/ant-design-pro/sign';
 
 const statusArr = ['未审核', '已通过', '未通过'];
-
+const colors = ['gray', 'green', 'red'];
 const columns = [
   {
     title: '赛事名',
@@ -22,7 +22,7 @@ const columns = [
     key: 'item_relation',
     render: (data: any) =>
       data.map((it: any) => (
-        <Tag color="red">
+        <Tag color="gray">
           {it.item_name} {it.sort_name}
         </Tag>
       )),
@@ -37,7 +37,7 @@ const columns = [
     title: '审核状态',
     dataIndex: 'status',
     key: 'status',
-    render: (data: any) => <Tag color="green">{statusArr[data]}</Tag>,
+    render: (status: any) => <Tag color={colors[status]}>{statusArr[status]}</Tag>,
   },
 
   {
@@ -53,7 +53,7 @@ const columns = [
       return (
         <Space>
           <Button
-            type="primary"
+            type="link"
             onClick={() => {
               history.push({
                 pathname: '/comSign/review/detail',
@@ -66,22 +66,22 @@ const columns = [
           >
             详情
           </Button>
-          {status === 2 && (
+          {/* {status === 2 && (
             <Button
-              type="primary"
+              type="link"
               onClick={() => {
-                history.push({
-                  pathname: '/comSign/review/detail',
-                  query: {
-                    ...query,
-                    detail: '1',
-                  },
-                });
+                // history.push({
+                //   pathname: '/comSign/review/detail',
+                //   query: {
+                //     ...query,
+                //     detail: '1',
+                //   },
+                // });
               }}
             >
               修改
             </Button>
-          )}
+          )} */}
         </Space>
       );
     },

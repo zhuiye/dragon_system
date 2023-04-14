@@ -2,10 +2,12 @@ import { EditableProTable, ProColumns } from '@ant-design/pro-table';
 import { nationsArray, postArray } from './nation';
 import React, { useState } from 'react';
 import { useRequest } from 'ahooks';
-import { delPlayer, getPlayers, updatePlayers } from '@/services/ant-design-pro/player';
+import { addPlayer, delPlayer, getPlayers, updatePlayers } from '@/services/ant-design-pro/player';
 import { useQuery } from '@/components/hooks/useQuery';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Avatar, Card, Tag } from 'antd';
+import { Avatar, Button, Card, Tag, message } from 'antd';
+import VerticalSpace from '@/components/VerticalSpace';
+import AddPlayerModal from './AddPlayerModal';
 
 type DataSourceType = {
   player_id: React.Key;
@@ -19,7 +21,7 @@ export default () => {
   const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
   const query = useQuery();
 
-  const { data = [], run } = useRequest(async () => getPlayers({ team_id: query.team_id }));
+  const { data = [], refresh } = useRequest(async () => getPlayers({ team_id: query.team_id }));
 
   const columns: ProColumns<DataSourceType>[] = [
     {
@@ -108,7 +110,7 @@ export default () => {
           key="delete"
           onClick={async () => {
             await delPlayer({ player_id: record.player_id });
-            run();
+            refresh();
           }}
         >
           删除
@@ -119,42 +121,51 @@ export default () => {
 
   return (
     <>
-      <PageContainer>
+      <PageContainer title="我的成员">
         <Card>
-          <EditableProTable<DataSourceType>
-            rowKey="player_id"
-            headerTitle="我的队员"
-            maxLength={5}
-            scroll={{
-              x: 960,
-            }}
-            recordCreatorProps={{
-              position: 'top',
-              record: () => ({ player_id: (Math.random() * 1000000).toFixed(0) }),
-            }}
-            loading={false}
-            columns={columns}
-            request={async () => ({
-              data: data,
-              total: data.length,
-              success: true,
-            })}
-            value={data}
-            onChange={setDataSource}
-            editable={{
-              type: 'multiple',
-              editableKeys,
-              onSave: async (rowKey, data, row) => {
-                console.log(rowKey, data, row);
+          <VerticalSpace>
+            <AddPlayerModal
+              onFinish={async (values) => {
+                await addPlayer({
+                  team_id: query.team_id,
+                  ...values,
+                });
+                message.success('添加成功');
+                refresh();
+                return true;
+              }}
+            />
+            <EditableProTable<DataSourceType>
+              rowKey="player_id"
+              headerTitle="我的队员"
+              maxLength={5}
+              scroll={{
+                x: 960,
+              }}
+              loading={false}
+              columns={columns}
+              request={async () => ({
+                data: data,
+                total: data.length,
+                success: true,
+              })}
+              value={data}
+              onChange={setDataSource}
+              editable={{
+                type: 'multiple',
+                editableKeys,
+                onSave: async (rowKey, data, row) => {
+                  console.log(rowKey, data, row);
 
-                delete data.index;
-                await updatePlayers(data);
+                  delete data.index;
+                  await updatePlayers(data);
 
-                run();
-              },
-              onChange: setEditableRowKeys,
-            }}
-          />
+                  refresh();
+                },
+                onChange: setEditableRowKeys,
+              }}
+            />
+          </VerticalSpace>
         </Card>
       </PageContainer>
     </>

@@ -6,6 +6,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'ahooks';
 import { Button, Card, Form, Input, InputNumber, Radio, Select, Timeline, message } from 'antd';
 import React from 'react';
+import { useModel } from 'umi';
 
 const layout = {
   labelCol: { span: 4 },
@@ -14,6 +15,8 @@ const layout = {
 
 const App: React.FC = () => {
   const [form] = Form.useForm();
+
+  const { initialState } = useModel('@@initialState');
 
   const query = useQuery();
 
@@ -53,6 +56,7 @@ const App: React.FC = () => {
       desc,
       path,
       foul_type,
+      user_id: initialState?.currentUser?.user_id,
     });
     message.success('录入成功');
     form.resetFields();
@@ -62,9 +66,6 @@ const App: React.FC = () => {
     <PageContainer title="犯规录入">
       <Card>
         <Form {...layout} form={form}>
-          <Form.Item name="creator">
-            <Input placeholder="请输入裁判员名字" />
-          </Form.Item>
           <Form.Item name="timeline_id">
             <Select options={itemMap} placeholder="请选择比赛内容" />
           </Form.Item>

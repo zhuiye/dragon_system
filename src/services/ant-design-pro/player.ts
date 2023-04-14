@@ -12,7 +12,6 @@ export interface Player {
 
   is_seed: number;
 }
-/** 此处后端没有提供注释 GET /api/competition */
 export async function getPlayers(options?: { [key: string]: any }) {
   return request<any[]>('/dragon-api/player', {
     method: 'GET',
@@ -30,6 +29,13 @@ export async function importPlayers(description: { [key: string]: any }) {
 export async function updatePlayers(description: { [key: string]: any }) {
   return request<Omit<any, 'team_id'>>('/dragon-api/player', {
     method: 'PATCH',
+    data: description,
+  });
+}
+
+export async function addPlayer(description: { [key: string]: any }) {
+  return request<any>('/dragon-api/player', {
+    method: 'Post',
     data: description,
   });
 }

@@ -10,7 +10,7 @@ const checkStatus = ['未检录', '检录完成'];
 function Index() {
   const query = useQuery();
 
-  const { data = [] } = useRequest(() => getCheckList({ competition_id: query.competition_id }));
+  const { data = [] } = useRequest(() => getCheckList(query));
   const columns = [
     {
       title: '队伍名',
@@ -19,9 +19,9 @@ function Index() {
       render: (text: any) => <Tag>{text}</Tag>,
     },
     {
-      title: '参赛队伍人数',
-      dataIndex: 'team_count',
-      key: 'team_count',
+      title: '龙舟赛道',
+      dataIndex: 'path',
+      key: 'path',
     },
     {
       title: '检录状态',

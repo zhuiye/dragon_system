@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Card, Table, Tag, Typography } from 'antd';
+import { Button, Card, Table, Tag, Typography } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'ahooks';
 import { useQuery } from '@/components/hooks/useQuery';
 import { getScore, getScoreGroup } from '@/services/ant-design-pro/score';
-import VerticalSpace from '@/components/VerticalSpace';
+/*@ts-ignore*/
+import html2pdf from 'html2pdf.js';
 
 function secondsToTime(seconds: number) {
   let minutes = Math.floor(seconds / 60);
@@ -39,6 +40,27 @@ const columns = [
   },
 ];
 
+function generatePdf(id: any, filename: string) {
+  const element = document.getElementById(id);
+
+  let opt = {
+    filename: `${filename}.pdf`,
+    image: { type: 'jpeg', quality: 0.6 },
+    html2canvas: {
+      useCORS: true, //要渲染图片,此项必须要有
+      backgroundColor: null,
+      scrollX: 0, // 如果不这样设置,生成的PDF只有可视区的内容
+      scrollY: 0, // 如果不这样设置,生成的PDF只有可视区的内容
+      scale: 1, // 用于渲染的尺度,默认设备的像素比 window.devicePixelRatio
+    },
+    // before: 在 .break-page 之前分隔 ,after: 在 #after1,#after2 之后分割
+    pagebreak: { before: '.break-page', after: ['#after1', '#after2'] }, // 控制分页符
+    jsPDF: { orientation: 'portrait', compressPDF: true }, // unit: 'pt', format: 'a4', // 此库中的一些配置
+  };
+
+  html2pdf().set(opt).from(element).save();
+}
+
 function Index() {
   const query = useQuery();
 
@@ -50,15 +72,27 @@ function Index() {
     <PageContainer title={'成绩列表'}>
       {data.map((it: any, key: number) => (
         <Card key={key}>
-          <VerticalSpace>
-            <Typography.Title>{it.content_name}</Typography.Title>
+          <div id={'pdf' + key}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography.Title>{it.content_name}</Typography.Title>
+              <Button
+                type="primary"
+                data-html2canvas-ignore="true"
+                onClick={() => {
+                  generatePdf('pdf' + key, it.content_name);
+                }}
+              >
+                导出pdf
+              </Button>
+            </div>
+
             <Table
               dataSource={it.data}
               columns={columns}
               pagination={{ hideOnSinglePage: true, pageSize: 100000 }}
               bordered
             />
-          </VerticalSpace>
+          </div>
         </Card>
       ))}
     </PageContainer>

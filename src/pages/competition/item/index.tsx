@@ -54,7 +54,7 @@ function Index() {
       dataIndex: 'item_id',
       render: (item_id) => (
         <Button
-          type="primary"
+          type="link"
           onClick={() => {
             onDel({ item_id }, itemTableRef, deleteItem);
           }}
@@ -90,8 +90,7 @@ function Index() {
       dataIndex: 'sort_id',
       render: (sort_id) => (
         <Button
-          danger
-          type="primary"
+          type="link"
           onClick={async () => {
             onDel({ sort_id }, itemSortTableRef, deleteSortItem);
           }}

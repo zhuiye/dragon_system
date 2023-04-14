@@ -31,8 +31,14 @@ const columns = [
   },
   {
     title: '裁判员',
-    dataIndex: 'creator',
-    key: 'creator',
+    dataIndex: 'user',
+    key: 'user',
+    render: (user: any) => (
+      <Space>
+        <span>{user.name}</span>
+        <Tag>{user.role_name}</Tag>
+      </Space>
+    ),
   },
   {
     title: '违规备注',

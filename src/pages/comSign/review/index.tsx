@@ -7,6 +7,8 @@ import { getSignUp } from '@/services/ant-design-pro/sign';
 
 const statusArr = ['未审核', '已通过', '未通过'];
 
+const colors = ['gray', 'green', 'red'];
+
 const columns = [
   {
     title: '赛事名',
@@ -31,7 +33,7 @@ const columns = [
     title: '审核状态',
     dataIndex: 'status',
     key: 'status',
-    render: (data: any) => <Tag color="green">{statusArr[data]}</Tag>,
+    render: (status: any) => <Tag color={colors[status]}>{statusArr[status]}</Tag>,
   },
 
   {

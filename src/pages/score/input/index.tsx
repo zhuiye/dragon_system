@@ -12,13 +12,8 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
-/* eslint-enable no-template-curly-in-string */
-
 const App: React.FC = () => {
   const [form] = Form.useForm();
-  const onFinish = (values: any) => {
-    console.log(values);
-  };
 
   const query = useQuery();
 
@@ -76,10 +71,10 @@ const App: React.FC = () => {
           <Form.Item name="score">
             <Input placeholder="请输入成绩" addonAfter="S" />
           </Form.Item>
-          <Form.Item name="qualifications" label="具备比赛资格">
+          <Form.Item name="qualifications">
             <Radio.Group defaultValue={1}>
-              <Radio value={1}>是</Radio>
-              <Radio value={0}>否</Radio>
+              <Radio value={1}>成绩有效</Radio>
+              <Radio value={0}>成绩无效</Radio>
             </Radio.Group>
           </Form.Item>
 
