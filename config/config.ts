@@ -68,7 +68,7 @@ export default defineConfig({
     {
       path: '/competition',
       name: '赛事管理',
-      icon: 'dashboard',
+      icon: 'DatabaseOutlined',
       access: 'normalRouteFilter',
       routes: [
         {
@@ -124,7 +124,7 @@ export default defineConfig({
     {
       path: '/review',
       name: '报名审核',
-      icon: 'dashboard',
+      icon: 'FolderViewOutlined',
       access: 'normalRouteFilter',
       routes: [
         {
@@ -145,7 +145,7 @@ export default defineConfig({
     {
       path: '/comSign',
       name: '报名',
-      icon: 'dashboard',
+      icon: 'TeamOutlined',
       access: 'normalRouteFilter',
       routes: [
         {
@@ -161,25 +161,16 @@ export default defineConfig({
           path: '/comSign/matchTeam',
           component: './comSign/MatchTeam',
         },
-        // {
-        //   path: '/comSign/review',
-        //   component: './comSign/review',
-        // },
         {
           path: '/comSign/review/detail',
           component: './comSign/review/detail',
         },
-        // {
-        //   name: '详情页',
-        //   path: '/check/detail',
-        //   component: './check/detail',
-        // },
       ],
     },
     {
       path: '/score',
       name: '竞赛成绩管理',
-      icon: 'dashboard',
+      icon: 'FieldNumberOutlined',
       access: 'normalRouteFilter',
 
       routes: [
@@ -192,6 +183,15 @@ export default defineConfig({
           name: '犯规记录',
           path: '/score/foul',
           component: './score/foul',
+        },
+        {
+          name: '成绩确认',
+          path: '/score/confirm',
+          component: './score/confirm',
+        },
+        {
+          path: '/score/confirm/list',
+          component: './score/confirm/list',
         },
         {
           path: '/score/foul/input',
@@ -216,7 +216,7 @@ export default defineConfig({
     {
       path: '/competitor',
       name: '编排管理',
-      icon: 'dashboard',
+      icon: 'ApartmentOutlined',
       access: 'normalRouteFilter',
 
       routes: [

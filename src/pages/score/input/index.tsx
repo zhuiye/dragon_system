@@ -4,7 +4,7 @@ import { getSignUpTeams } from '@/services/ant-design-pro/sign';
 import { getTimeline } from '@/services/ant-design-pro/timeline';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'ahooks';
-import { Button, Card, Form, Input, InputNumber, Radio, Select, Timeline, message } from 'antd';
+import { Button, Card, Form, Input, Radio, Select, message } from 'antd';
 import React from 'react';
 
 const layout = {
@@ -53,6 +53,7 @@ const App: React.FC = () => {
       qualifications,
       item_key: query.item_key,
       score: parseInt(score),
+      is_confirm: 0,
     });
     message.success('录入成功');
     form.resetFields();

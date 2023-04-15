@@ -65,7 +65,11 @@ function Index() {
   const query = useQuery();
 
   const { data = [] } = useRequest(() =>
-    getScoreGroup({ competition_id: query.competition_id, item_key: query.item_key }),
+    getScoreGroup({
+      competition_id: query.competition_id,
+      item_key: query.item_key,
+      is_confirm: 1,
+    }),
   );
 
   return (

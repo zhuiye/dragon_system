@@ -38,7 +38,7 @@ const columns = [
           type="primary"
           onClick={() => {
             history.push({
-              pathname: '/score/home/input',
+              pathname: '/score/confirm/list',
               query: {
                 item_key: record.item_key,
                 competition_id: record.competition_id,
@@ -46,7 +46,20 @@ const columns = [
             });
           }}
         >
-          录入成绩
+          确认成绩
+        </Button>
+        <Button
+          onClick={() => {
+            history.push({
+              pathname: '/score/home/detail',
+              query: {
+                item_key: record.item_key,
+                competition_id: record.id,
+              },
+            });
+          }}
+        >
+          详情
         </Button>
       </Space>
     ),
