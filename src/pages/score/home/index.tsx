@@ -41,7 +41,7 @@ const columns = [
               pathname: '/score/home/input',
               query: {
                 item_key: record.item_key,
-                competition_id: record.competition_id,
+                competition_id: record.id,
               },
             });
           }}

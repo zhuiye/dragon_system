@@ -38,7 +38,7 @@ export async function postSignUp(description: { [key: string]: any }) {
 }
 // 更新状态
 export async function updateSignUp(description: { [key: string]: any }) {
-  return request<Omit<any, 'team_id'>>('/dragon-api/sign-up', {
+  return request<any>('/dragon-api/sign-up', {
     method: 'PATCH',
     data: description,
   });

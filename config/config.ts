@@ -165,6 +165,10 @@ export default defineConfig({
           path: '/comSign/review/detail',
           component: './comSign/review/detail',
         },
+        {
+          path: '/comSign/review/update',
+          component: './comSign/home/updateSign',
+        },
       ],
     },
     {

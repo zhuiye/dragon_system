@@ -16,7 +16,7 @@ function Index() {
   return (
     <PageContainer>
       <Card>
-        {query.reason && (
+        {!!query.reason && (
           <div style={{ paddingBottom: 20 }}>
             <Typography.Text type="danger">审核不通过 : {query.reason}</Typography.Text>
           </div>

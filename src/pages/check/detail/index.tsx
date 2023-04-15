@@ -13,7 +13,7 @@ const statusColors = ['gray', 'red', 'green'];
 function Index() {
   const columns = [
     {
-      title: '赛事名',
+      title: '比赛内容',
       dataIndex: 'content_name',
       key: 'content_name',
     },

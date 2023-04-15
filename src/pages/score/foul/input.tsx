@@ -1,11 +1,10 @@
 import { useQuery } from '@/components/hooks/useQuery';
 import { addFoul } from '@/services/ant-design-pro/foul';
-import { getSignUpTeams } from '@/services/ant-design-pro/sign';
 import { getTimeline } from '@/services/ant-design-pro/timeline';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'ahooks';
 import { Button, Card, Form, Input, InputNumber, Radio, Select, Timeline, message } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useModel } from 'umi';
 
 const layout = {
@@ -20,15 +19,8 @@ const App: React.FC = () => {
 
   const query = useQuery();
 
-  //
   const { data: times = [] } = useRequest(() =>
     getTimeline({
-      competition_id: query.competition_id,
-      item_key: query.item_key,
-    }),
-  );
-  const { data: teams = [] } = useRequest(() =>
-    getSignUpTeams({
       competition_id: query.competition_id,
       item_key: query.item_key,
     }),
@@ -39,7 +31,16 @@ const App: React.FC = () => {
     value: item.timeline_id,
   }));
 
-  const teamsMap = teams.map((item: any) => ({
+  const [cur, setCur] = useState();
+  const [teamList, setTeamList] = useState([]);
+
+  useEffect(() => {
+    if (cur) {
+      const timeLine = times.find((it: any) => (it.timeline_id = cur));
+      setTeamList(timeLine.assign_list);
+    }
+  }, [cur]);
+  const teamsMap = teamList.map((item: any) => ({
     label: item.team_name,
     value: item.team_id,
   }));
@@ -67,7 +68,14 @@ const App: React.FC = () => {
       <Card>
         <Form {...layout} form={form}>
           <Form.Item name="timeline_id">
-            <Select options={itemMap} placeholder="请选择比赛内容" />
+            <Select
+              options={itemMap}
+              placeholder="请选择比赛内容"
+              onChange={(timeline_id) => {
+                setCur(timeline_id);
+                form.setFieldValue('team_id', null);
+              }}
+            />
           </Form.Item>
           <Form.Item name="team_id">
             <Select options={teamsMap} placeholder="请选择参赛队伍" />

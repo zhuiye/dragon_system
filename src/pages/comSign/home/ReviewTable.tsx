@@ -47,7 +47,8 @@ const columns = [
     render: (status: any, record: any) => {
       const query = {
         sign_up_id: record.sign_up_id,
-        item_relation: JSON.stringify(record.item_relation),
+        item_sort_link: JSON.stringify(record.item_relation),
+        team_id: record.team_id,
         reason: record.reason,
       };
       return (
@@ -66,22 +67,23 @@ const columns = [
           >
             详情
           </Button>
-          {/* {status === 2 && (
+          {status === 2 && (
             <Button
               type="link"
               onClick={() => {
-                // history.push({
-                //   pathname: '/comSign/review/detail',
-                //   query: {
-                //     ...query,
-                //     detail: '1',
-                //   },
-                // });
+                history.push({
+                  pathname: '/comSign/review/update',
+                  query: {
+                    // item_sort_link:record.i
+                    ...query,
+                    detail: '1',
+                  },
+                });
               }}
             >
               修改
             </Button>
-          )} */}
+          )}
         </Space>
       );
     },
