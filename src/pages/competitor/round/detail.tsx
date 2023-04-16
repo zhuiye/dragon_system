@@ -95,6 +95,7 @@ function generateCompetitionData(data: any, res: any) {
         time: null,
         race_track_number: res.race_track_number,
         item_sort_link: JSON.stringify(getItemSortLink(res.currentKey, res.msgList)),
+        item_key: res.currentKey,
       });
     }
   });
@@ -105,7 +106,7 @@ function generateCompetitionData(data: any, res: any) {
 function Index() {
   const query = useQuery();
 
-  const { data: msgList = [] } = useRequest(() =>
+  const { data: msgList = [], refresh: SignUpRefresh } = useRequest(() =>
     getSignUpCount({ competition_id: query.competition_id }),
   );
   const {
@@ -139,6 +140,7 @@ function Index() {
     run();
 
     setVisible(false);
+    SignUpRefresh();
   };
 
   return (
@@ -176,7 +178,7 @@ function Index() {
                 }
               />
               <Button
-                disabled={data.length > 0}
+                disabled={item.is_generate}
                 type="primary"
                 onClick={() => {
                   setCurrentKey(item.key);

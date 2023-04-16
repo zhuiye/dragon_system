@@ -129,11 +129,11 @@ function Index() {
 
   // 半决赛
   const assignSemifinal = async (timeLineItem: any) => {
-    handlerProcess(timeLineItem, preScores);
+    await handlerProcess(timeLineItem, preScores);
   };
   //决赛
   const assignFinal = async (timeLineItem: any) => {
-    handlerProcess(timeLineItem, finalScores);
+    await handlerProcess(timeLineItem, finalScores);
   };
 
   const assign = async (item: any) => {

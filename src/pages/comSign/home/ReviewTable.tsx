@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, Card, List, Modal, Space, Table, Tag, Typography, Form, Input, Radio } from 'antd';
-import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'ahooks';
 import { history } from 'umi';
 import { getSignUp } from '@/services/ant-design-pro/sign';
@@ -74,7 +73,6 @@ const columns = [
                 history.push({
                   pathname: '/comSign/review/update',
                   query: {
-                    // item_sort_link:record.i
                     ...query,
                     detail: '1',
                   },

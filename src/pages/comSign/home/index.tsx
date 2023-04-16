@@ -9,8 +9,9 @@ import { useRequest } from 'ahooks';
 import { addTeams, getTeams } from '@/services/ant-design-pro/team';
 import { importPlayers } from '@/services/ant-design-pro/player';
 
-const exportExcel = (team_id: number) => {
+const exportExcel = (team_id: number, user_id: any) => {
   const input = document.createElement('input');
+
   input.type = 'file';
   input.accept = '.xlsx';
   input.onchange = async (event) => {
@@ -18,9 +19,7 @@ const exportExcel = (team_id: number) => {
     if (file) {
       try {
         const people = await parseExcel(file);
-        console.log(people);
-
-        const state = people.map((item) => ({ ...item, user_id: 1, team_id: team_id }));
+        const state = people.map((item) => ({ ...item, user_id: user_id, team_id: team_id }));
 
         await importPlayers({ data: state });
         message.success('导入成功');
@@ -35,6 +34,8 @@ const exportExcel = (team_id: number) => {
 function Index() {
   const { data: teamList = [], run } = useRequest(getTeams);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { initialState, setInitialState } = useModel('@@initialState');
 
   return (
     <>
@@ -96,7 +97,9 @@ function Index() {
                       <a
                         key="list-loadmore-edit"
                         title="利用excel报名导入更加迅速"
-                        onClick={() => exportExcel(item.team_id)}
+                        onClick={() =>
+                          exportExcel(item.team_id, initialState?.currentUser?.user_id)
+                        }
                       >
                         导入
                       </a>,

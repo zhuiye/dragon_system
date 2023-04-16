@@ -9,7 +9,7 @@ const colors = ['gold', '#f50', 'lime', 'green', 'blue', 'gray'];
 function Index() {
   const query = useQuery();
 
-  const items = JSON.parse(query.item_relation);
+  const items = JSON.parse(query.item_sort_link);
 
   const post_arr = ['领队', '教练', '鼓手', '舵手', '划手', '替补'];
 

@@ -93,7 +93,7 @@ const MatchTeam: React.FC = () => {
     await postSignUp({
       competition_id: query.competition_id,
       team_id: query.team_id,
-      player_ids: '这个参数好像无意义',
+      status: 0,
       item_relation: JSON.stringify(links),
       submit_time: new Date().getTime(),
     });

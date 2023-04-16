@@ -1,6 +1,5 @@
 import { useQuery } from '@/components/hooks/useQuery';
 import { addScore } from '@/services/ant-design-pro/score';
-import { getSignUpTeams } from '@/services/ant-design-pro/sign';
 import { getTimeline } from '@/services/ant-design-pro/timeline';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'ahooks';
@@ -34,7 +33,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (cur) {
-      const timeLine = times.find((it: any) => (it.timeline_id = cur));
+      const timeLine = times.find((it: any) => it.timeline_id === cur);
       setTeamList(timeLine.assign_list);
     }
   }, [cur]);
